@@ -1,0 +1,47 @@
+﻿@page 
+@model ProductsModel
+
+@{
+    ViewData["Title"] = "Produkty";
+}
+
+<body>
+    <form>
+        <p>
+            Znajdź produkt: <input type="text" asp-for="SearchString" />
+            <input type="submit" value="Szukaj" />
+        </p>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Nazwa produktu
+                </th>
+                <th>
+                    Części zamienne
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Product)
+            {
+                <tr>
+                    <td>
+                        @item.ProductId.ToString("0")
+                    </td>
+                    <td>
+                        @item.ProductName
+                    </td>
+                    <td>
+                        @{string url = "/SpareParts/" + @item.ProductId.ToString("0");}
+                        <a href=@url> Sprawdź częśći zamienne!</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>

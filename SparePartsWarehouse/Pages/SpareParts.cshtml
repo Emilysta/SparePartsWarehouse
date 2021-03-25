@@ -1,0 +1,37 @@
+﻿@page "{id:int}"
+@model SparePartsModel
+@{
+    ViewData["Title"] = "Części zamienne";
+}
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Nazwa części
+                </th>
+                <th>
+                    Potrzebna ilość
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ if (Model.spareParts.Any())
+                    foreach (var item in Model.spareParts)
+                    {
+                        <tr>
+                            <td>
+                                @item.DetailName
+                            </td>
+                            <td>
+                                @item.RequiredQuantity
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+            }
+        </tbody>
+    </table>
+</body>
