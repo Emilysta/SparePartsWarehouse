@@ -73,7 +73,7 @@ namespace SparePartsWarehouse
 
             modelBuilder.Entity<InvoiceItem>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.Key).HasName("KEY");
 
                 entity.ToTable("INVOICE_ITEMS");
 
@@ -88,6 +88,11 @@ namespace SparePartsWarehouse
                 entity.Property(e => e.ProductQuantity)
                     .HasColumnType("NUMBER")
                     .HasColumnName("PRODUCT_QUANTITY");
+
+                entity.Property(e => e.Key)
+                    .HasColumnType("NUMBER")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("KEY");
 
                 entity.HasOne(d => d.Invoice)
                     .WithMany()

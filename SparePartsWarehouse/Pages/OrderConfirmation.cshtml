@@ -6,5 +6,33 @@
 }
 
 <p>
-    Witam. @Model.Message
+    Witaj @Model.Purchaser! Twoje zamówienie zostało złożone!<br />
 </p>
+<div>
+    Podsumowanie:<br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Nazwa produktu
+                </th>
+                <th>
+                    Zamówiona ilość
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ProductsList)
+            {
+                <tr>
+                    <td>
+                        @item.ItemName
+                    </td>
+                    <td>
+                        @item.Quantity.ToString("0")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
