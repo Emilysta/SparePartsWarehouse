@@ -14,7 +14,9 @@ namespace SparePartsWarehouse
     public class SparePartsModel : PageModel
     {
         private readonly ModelContext _context;
+
         public IList<SparePart> spareParts { get; set; }
+
         public SparePartsModel(ModelContext context)
         {
             _context = context;
@@ -34,6 +36,7 @@ namespace SparePartsWarehouse
                     RequiredQuantity = (int)prod.DetailQuantity
                 });
             }
+            _context.Dispose();
         }
     }
 }
