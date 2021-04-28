@@ -1,10 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SparePartsWarehouse;
+using Microsoft.Extensions.Primitives;
 
 namespace SparePartsWarehouse.Pages
 {
@@ -19,9 +15,9 @@ namespace SparePartsWarehouse.Pages
         public string Purchaser { get; set; }
         public void OnPost()
         {
-            Request.Form.TryGetValue("Purchaser", out Microsoft.Extensions.Primitives.StringValues purchaser);
-            Request.Form.TryGetValue("Product", out Microsoft.Extensions.Primitives.StringValues products);
-            Request.Form.TryGetValue("Quantity", out Microsoft.Extensions.Primitives.StringValues quantities);
+            Request.Form.TryGetValue("Purchaser", out StringValues purchaser);
+            Request.Form.TryGetValue("Product", out StringValues products);
+            Request.Form.TryGetValue("Quantity", out StringValues quantities);
             ProductsList = new List<OrderItem>();
             int i = 0;
             foreach (string s in products)

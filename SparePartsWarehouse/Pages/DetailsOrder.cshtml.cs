@@ -9,15 +9,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SparePartsWarehouse.Pages
 {
-
-    public class DetailList
-    {
-        [Required]
-        [Display(Name ="Region")]
-        public string SelectedId { get; set; }
-
-        public IEnumerable<SelectListItem> DetailsNames { get; set; }
-    }
     public class DetailsOrderModel : PageModel
     {
         private readonly ModelContext _context;
@@ -27,8 +18,13 @@ namespace SparePartsWarehouse.Pages
         public int Quantity { get; set; }
         
         [BindProperty(SupportsGet =true)]
-        public DetailList DetailList { get; set; }
         public List<DetailOrderItem> detailsList { get; set; }
+
+        [Required]
+        [Display(Name = "Region")]
+        public string SelectedId { get; set; }
+
+        public IEnumerable<SelectListItem> DetailsNames { get; set; }
 
         public DetailsOrderModel(ModelContext context)
         {
@@ -36,7 +32,7 @@ namespace SparePartsWarehouse.Pages
         }
         public void OnGet()
         {
-            this.DetailList.DetailsNames = GetDetails();
+           DetailsNames = GetDetails();
             _context.Dispose();
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -28,7 +26,7 @@ namespace SparePartsWarehouse
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.31:1521/warehousepdb;");
+                optionsBuilder.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.30:51521/PDB1;");
             }
         }
 

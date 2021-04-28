@@ -13,11 +13,11 @@
     }
 }
 <h2>Dodaj elementy do zamówienia: </h2>
-<form method="post">
+<form method="post" action="Stock">
     <div class="form-group">
         <div id="container">
             <div id="DetailNode">
-                <select id="selectNode" name="Detail" asp-items="Model.DetailList.DetailsNames">
+                <select id="selectNode" name="Detail" asp-items="Model.DetailsNames">
             <option value="">-Wybierz odpowiednią część-</option>
         </select>
                 <label>Ilość:</label>

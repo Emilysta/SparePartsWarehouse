@@ -1,9 +1,8 @@
 ﻿@page
 @using Microsoft.AspNetCore.Http
 @model SparePartsWarehouse.Pages.StockModel
-
-@{
-    ViewData["Title"] = "Stock";
+@attribute [IgnoreAntiforgeryToken]
+@{ ViewData["Title"] = "Stock";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";
@@ -11,8 +10,7 @@
     else
     {
         Layout = "_Layout";
-    }
-}
+    } }
 
 <h1>Stock</h1>
 
@@ -31,14 +29,14 @@
     <tbody>
         @foreach (var item in Model.Stock)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DetailName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                </td>
-            </tr>
-        }
+<tr>
+    <td>
+        @item.DetailName
+    </td>
+    <td>
+        @item.Quantity.ToString("0")
+    </td>
+</tr>
+}
     </tbody>
 </table>
