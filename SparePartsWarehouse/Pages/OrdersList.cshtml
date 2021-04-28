@@ -1,0 +1,50 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.OrdersListModel
+
+@{
+    ViewData["Title"] = "OrdersList";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+
+<h1>OrdersList</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Invoice[0].InvoiceDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Invoice[0].Purchaser)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Invoice) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.InvoiceDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Purchaser)
+            </td>
+            <td>
+                <a asp-page="./InvoiceDetails" asp-route-id="@item.InvoiceId">Details</a>
+                <a asp-page="./DeleteInvoice" asp-route-id="@item.InvoiceId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

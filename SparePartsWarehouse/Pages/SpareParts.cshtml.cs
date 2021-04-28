@@ -22,8 +22,6 @@ namespace SparePartsWarehouse
             _context = context;
         }
 
-        public IList<Product> Product { get; set; }
-
         public async Task OnGetAsync(int id)
         {
             var prodSpecifications = await _context.ProdSpecifications.Where(x => x.ProductId == id).ToListAsync();

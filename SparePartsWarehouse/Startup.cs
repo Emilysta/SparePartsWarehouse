@@ -25,9 +25,10 @@ namespace SparePartsWarehouse
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-
+            services.AddSession();
+            services.AddMemoryCache();
             services.AddDbContext<ModelContext>(options =>
-            options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.31:1521/warehousepdb;"));
+            options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.30:51521/pdb1;"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,7 +52,7 @@ namespace SparePartsWarehouse
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

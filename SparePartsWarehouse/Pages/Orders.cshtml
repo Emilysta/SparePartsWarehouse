@@ -1,7 +1,16 @@
 ﻿@page
+@using Microsoft.AspNetCore.Http
 @model SparePartsWarehouse.OrdersModel
 @{
     ViewData["Title"] = "Zamówienie";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 }
 <form action="OrderConfirmation" method="post">
     <div class="form-group">

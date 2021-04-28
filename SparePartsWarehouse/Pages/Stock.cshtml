@@ -1,0 +1,44 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.StockModel
+
+@{
+    ViewData["Title"] = "Stock";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+
+<h1>Stock</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock[0].DetailName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Stock[0].Quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Stock)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DetailName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

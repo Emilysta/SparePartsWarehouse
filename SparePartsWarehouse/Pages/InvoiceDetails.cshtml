@@ -1,0 +1,50 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.InvoiceDetailsModel
+
+@{
+    ViewData["Title"] = "Szczegóły zamówienia";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+
+<h1>InvoiceDetails</h1>
+
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Nazwa części
+                </th>
+                <th>
+                    Potrzebna ilość
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ if (Model.invoiceDetails.Any())
+                    foreach (var item in Model.invoiceDetails)
+                    {
+                        <tr>
+                            <td>
+                                @item.DetailName
+                            </td>
+                            <td>
+                                @item.Quantity
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+            }
+        </tbody>
+    </table>
+</body>

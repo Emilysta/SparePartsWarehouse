@@ -12,7 +12,7 @@ namespace SparePartsWarehouse
         /// Event informs about a placed order. When it is raised, the databse
         /// has been updated with a new invoice.
         /// </summary>
-        public static event EventHandler OrderMadeEvent = delegate { };
+        public static event Action OrderMadeEvent;
 
         /// <summary>
         /// Method allows to make an order. It runs on a separate thread and saves
@@ -22,10 +22,10 @@ namespace SparePartsWarehouse
         /// <param name="orderItems">List of items to be ordered</param>
         public static void MakeOrder(string purchaser, List<OrderItem> orderItems)
         {
-            Thread thread = new Thread(() =>
+            new Thread(() =>
             {
                 ModelContext _context = new ModelContext();
-                _context.Invoices.Add(new Invoice
+                var invoice = _context.Invoices.Add(new Invoice
                 {
                     Purchaser = purchaser,
                     InvoiceDate = DateTime.Now
@@ -40,14 +40,14 @@ namespace SparePartsWarehouse
                         ProductId = productId,
                         ProductQuantity = item.Quantity,
                         InvoiceId = invoiceId,
-                        Invoice = _context.Invoices.OrderByDescending(x => x.InvoiceId).First(),
-                        Product = _context.Products.Where(x => x.ProductId == productId).First()
+                        Invoice = invoice.Entity,
+                        Product = _context.Products.Where(x => x.ProductName == item.ItemName).First()
                     });
                 }
                 _context.SaveChanges();
                 _context.Dispose();
-                OrderMadeEvent(null, EventArgs.Empty);
-            });
+                OrderMadeEvent?.Invoke();
+            }).Start();
 
         }
     }

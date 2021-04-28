@@ -1,0 +1,16 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+Zostałeś wylogowany! Zaraz nastąpi przekierowanie na stronę główną...
+<meta http-equiv="refresh" content="5; URL=/Index">

@@ -1,0 +1,53 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.DeleteInvoiceModel
+
+@{
+    ViewData["Title"] = "Usuwanie zamówienia";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+
+<h1>Usunięto zamówienie z dnia: @Model.invoice.InvoiceDate, złożone przez: @Model.invoice.Purchaser</h1>
+<h2>Zamówienie złożone było z poniższych elementów: </h2>
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Nazwa części
+                </th>
+                <th>
+                    Potrzebna ilość
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ if (Model.invoiceDetails.Any())
+                    foreach (var item in Model.invoiceDetails)
+                    {
+                        <tr>
+                            <td>
+                                @item.DetailName
+                            </td>
+                            <td>
+                                @item.Quantity
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    }
+            }
+        </tbody>
+    </table>
+</body>
+
+Za chwilę zostaniesz przeniesiony do listy zamówień:
+<meta http-equiv="refresh" content="5; URL=/OrdersList">
+

@@ -1,8 +1,18 @@
-﻿@page 
+﻿@page
+
+@using Microsoft.AspNetCore.Http;
 @model ProductsModel
 
 @{
     ViewData["Title"] = "Produkty";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 }
 
 <body>
@@ -21,9 +31,12 @@
                 <th>
                     Nazwa produktu
                 </th>
-                <th>
-                    Części zamienne
-                </th>
+                @if (HttpContext.Session.GetString("user") == "admin")
+                {
+                    <th>
+                        Części zamienne
+                    </th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -36,10 +49,13 @@
                     <td>
                         @item.ProductName
                     </td>
-                    <td>
-                        @{string url = "/SpareParts/" + @item.ProductId.ToString("0");}
-                        <a href=@url> Sprawdź częśći zamienne!</a>
-                    </td>
+                    @if (HttpContext.Session.GetString("user") == "admin")
+                    {
+                        <td>
+                            @{string url = "/SpareParts/" + @item.ProductId.ToString("0");}
+                            <a href=@url> Sprawdź części zamienne!</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
