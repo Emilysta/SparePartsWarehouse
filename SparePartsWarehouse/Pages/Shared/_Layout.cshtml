@@ -9,6 +9,37 @@
 </head>
 <body>
     <header>
+        @*<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Left</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="//codeply.com">Codeply</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Right</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>*@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">Strona główna</a>
@@ -22,7 +53,21 @@
                         </li>
                     </ul>
                 </div>
-                <a class="navbar-brand" asp-area="" asp-page="/Login">Zaloguj</a>
+
+                <div class="column" style="margin-right:40px">
+                    <a class="text-dark" asp-area="" asp-page="/Cart">
+                        <div class="row">
+                            <img class="rounded mx-auto d-block" height="30" src="~/images/shoping_cart.png" />
+                        </div>
+                        <div class="row">
+                            Koszyk
+                        </div>
+                    </a>
+                </div>
+                <div class="column">
+                    <a class="navbar-brand" asp-area="" asp-page="/Login" margin="10">Zaloguj</a>
+                </div>
+
             </div>
         </nav>
     </header>

@@ -1,0 +1,43 @@
+﻿@page
+@using Microsoft.AspNetCore.Http;
+@model SparePartsWarehouse.Pages.CartModel
+@{ ViewData["Title"] = "Koszyk";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    } }
+<body>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Nazwa produktu
+                </th>
+                <th>
+                    Ilość
+                </th>
+                <th>
+                    Cena
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (OrderItem item in Model.orderItems)
+            {
+                <tr>
+                    <td>
+                        @item.ItemName
+                    </td>
+                    <td>
+                        @item.Quantity
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</body>

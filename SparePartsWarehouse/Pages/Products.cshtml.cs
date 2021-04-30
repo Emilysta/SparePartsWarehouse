@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace SparePartsWarehouse
 {
@@ -15,24 +13,24 @@ namespace SparePartsWarehouse
 
         public string SearchString { get; set; }
 
-        public ProductsModel(ModelContext context)
-        {
-            _context = context;
-        }
+        public ProductsModel(ModelContext context) => _context = context;
 
-        public IList<Product> Product { get;set; }
+        public IList<Product> ProductsList { get; set; }
 
-        public async Task OnGetAsync()
+        public int PageNumber { get; set; }
+
+        public void OnGet(int page)
         {
             if (string.IsNullOrEmpty(SearchString))
             {
-                Product = await _context.Products.OrderBy(x => x.ProductId).ToListAsync();
+                ProductsList = _context.Products.OrderBy(x => x.ProductId).ToList();
             }
             else
             {
-                Product = await _context.Products.Where(x=>x.ProductName.Contains(SearchString)).OrderBy(x => x.ProductId).ToListAsync();
+                ProductsList = _context.Products.Where(x => x.ProductName.Contains(SearchString)).OrderBy(x => x.ProductId).ToList();
             }
             _context.Dispose();
+            PageNumber = page;
         }
     }
 }
