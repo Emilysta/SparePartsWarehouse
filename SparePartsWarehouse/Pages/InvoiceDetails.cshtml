@@ -2,8 +2,7 @@
 @using Microsoft.AspNetCore.Http
 @model SparePartsWarehouse.Pages.InvoiceDetailsModel
 
-@{
-    ViewData["Title"] = "Szczegóły zamówienia";
+@{ ViewData["Title"] = "Szczegóły zamówienia";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";
@@ -11,10 +10,9 @@
     else
     {
         Layout = "_Layout";
-    }
-}
+    } }
 
-<h1>InvoiceDetails</h1>
+<h1 class="text-center">Szczegóły zamówienia</h1>
 
 
 <body>
@@ -33,18 +31,16 @@
             @{ if (Model.invoiceDetails.Any())
                     foreach (var item in Model.invoiceDetails)
                     {
-                        <tr>
-                            <td>
-                                @item.DetailName
-                            </td>
-                            <td>
-                                @item.Quantity
-                            </td>
-                            <td>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td>
+                            @item.DetailName
+                        </td>
+                        <td>
+                            @item.Quantity
+                        </td>
+                    </tr>
                     }
-            }
+                }
         </tbody>
     </table>
 </body>

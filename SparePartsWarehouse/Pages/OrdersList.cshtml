@@ -3,7 +3,7 @@
 @model SparePartsWarehouse.Pages.OrdersListModel
 
 @{
-    ViewData["Title"] = "OrdersList";
+    ViewData["Title"] = "Lista zamówień";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";
@@ -14,11 +14,8 @@
     }
 }
 
-<h1>OrdersList</h1>
+<h1 class="text-center">Lista zamówień:</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -41,8 +38,8 @@
                 @Html.DisplayFor(modelItem => item.Purchaser)
             </td>
             <td>
-                <a asp-page="./InvoiceDetails" asp-route-id="@item.InvoiceId">Details</a>
-                <a asp-page="./DeleteInvoice" asp-route-id="@item.InvoiceId">Delete</a>
+                <a asp-page="./InvoiceDetails" asp-route-id="@item.InvoiceId">Szczegóły zamówienia</a>
+                <a asp-page="./DeleteInvoice" asp-route-id="@item.InvoiceId">Usuń zamówienie</a>
             </td>
         </tr>
 }

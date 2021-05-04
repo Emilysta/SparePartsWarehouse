@@ -17,9 +17,10 @@ namespace SparePartsWarehouse
 
         public IList<Product> ProductsList { get; set; }
 
+        [BindProperty(SupportsGet =true)]
         public int PageNumber { get; set; }
 
-        public void OnGet(int page)
+        public async void OnGet()
         {
             if (string.IsNullOrEmpty(SearchString))
             {
@@ -28,9 +29,11 @@ namespace SparePartsWarehouse
             else
             {
                 ProductsList = _context.Products.Where(x => x.ProductName.Contains(SearchString)).OrderBy(x => x.ProductId).ToList();
+                PageNumber = 1;
             }
+            if (PageNumber == 0)
+                PageNumber = 1;
             _context.Dispose();
-            PageNumber = page;
         }
     }
 }

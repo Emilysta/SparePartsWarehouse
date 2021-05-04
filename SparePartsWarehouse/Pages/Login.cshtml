@@ -1,7 +1,7 @@
 ﻿@page
 @using Microsoft.AspNetCore.Http;
 @model SparePartsWarehouse.Pages.LoginModel
-@{ ViewData["Title"] = "Home page";
+@{ ViewData["Title"] = "Login";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";
