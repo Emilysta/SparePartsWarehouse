@@ -16,30 +16,30 @@ namespace SparePartsWarehouse.Pages
     }
     public class CartModel : PageModel
     {
-        public List<CartItem> orderItems { get; set; }
+        public List<CartItem> OrderItems { get; set; }
         public void OnGet()
         {
-            orderItems = new List<CartItem>();
+            OrderItems = new List<CartItem>();
             if (Request.Cookies.TryGetValue("CartList", out string cartListString))
-                orderItems = JsonConvert.DeserializeObject<List<CartItem>>(cartListString);
+                OrderItems = JsonConvert.DeserializeObject<List<CartItem>>(cartListString);
         }
 
         public async void OnPostAsync()
         {
-            orderItems = new List<CartItem>();
+            OrderItems = new List<CartItem>();
             if (Request.Cookies.TryGetValue("CartList", out string cartListString))
             {
-                orderItems = JsonConvert.DeserializeObject<List<CartItem>>(cartListString);
+                OrderItems = JsonConvert.DeserializeObject<List<CartItem>>(cartListString);
                 Response.Cookies.Delete("CartList");
 
                 if (Request.Form.TryGetValue("productID", out var productID))
-                    orderItems.Remove(orderItems.Find(x => x.ProductId == int.Parse(productID)));
+                    OrderItems.Remove(OrderItems.Find(x => x.ProductId == int.Parse(productID)));
 
                 int itemsCount = 0;
-                foreach (CartItem x in orderItems)
+                foreach (CartItem x in OrderItems)
                     itemsCount += x.Count;
 
-                Response.Cookies.Append("CartList", JsonConvert.SerializeObject(orderItems));
+                Response.Cookies.Append("CartList", JsonConvert.SerializeObject(OrderItems));
                 Response.Cookies.Append("CartItemsCount", itemsCount.ToString());
                 if (itemsCount == 0)
                     Response.Cookies.Delete("CartItemsCount");

@@ -30,7 +30,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (CartItem item in Model.orderItems)
+            @foreach (CartItem item in Model.OrderItems)
             {
                 <tr>
                     <td>
@@ -57,10 +57,10 @@
     <div class="container">
 
         <form action="OrderConfirmation" method="post" class="text-right">
-            @foreach (CartItem item in Model.orderItems)
+            @foreach (CartItem item in Model.OrderItems)
             {
-                <input type="hidden" name="ProdutID" value="@item.ProductId" />
-                <input type="hidden" name="ProdutName" value="@item.ProductName" />
+                <input type="hidden" name="ProductID" value="@item.ProductId" />
+                <input type="hidden" name="ProductName" value="@item.ProductName" />
                 <input type="hidden" name="Quantity" value="@item.Count" />
             }
             <div class="form-group align-middle">
