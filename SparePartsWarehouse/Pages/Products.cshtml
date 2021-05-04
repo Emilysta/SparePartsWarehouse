@@ -1,6 +1,6 @@
 ﻿@page "{PageNumber:int?}"
-
 @using Microsoft.AspNetCore.Http;
+@attribute [IgnoreAntiforgeryToken]
 @model ProductsModel
 
 @{
@@ -15,86 +15,154 @@
     }
 }
 
-    <form>
-        <p>
-            Znajdź produkt: <input type="text" asp-for="SearchString" />
-            <input type="submit" value="Szukaj" />
-        </p>
-    </form>
-    <div class="container-fluid">
-        @for (int i = (Model.PageNumber - 1) * 9; i < (Model.PageNumber - 1) * 9 + 9; i += 3)
-        {
-            <div class="row" style="height:200px;margin:20px 0 20px 0">
-                @if (i < Model.ProductsList.Count)
-                {
-                    <div class="col" style="margin:0 10px 0 10px">
-                        <div class="container-fluid">
-                            <div class="row d-flex justify-content-center">
-                                @Model.ProductsList[i].ProductName
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <button class="btn btn-primary">Dodaj do koszyka</button>
-                            </div>
-                        </div>
-                    </div>
-                }
-                @if (i + 1 < Model.ProductsList.Count)
-                {
-                    <div class="col" style="margin:0 10px 0 10px">
-                        <div class="container-fluid">
-                            <div class="row d-flex justify-content-center">
-                                @Model.ProductsList[i + 1].ProductName
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <button class="btn btn-primary">Dodaj do koszyka</button>
-                            </div>
-                        </div>
-                    </div>
-                }
-                @if (i + 2 < Model.ProductsList.Count)
-                {
-                    <div class="col" style="margin:0 10px 0 10px">
-                        <div class="container-fluid">
-                            <div class="row d-flex justify-content-center">
-                                @Model.ProductsList[i + 2].ProductName
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
-                            </div>
-                            <div class="row d-flex justify-content-center">
-                                <button class="btn btn-primary">Dodaj do koszyka</button>
-                            </div>
-                        </div>
-                    </div>
-                }
+<form class="form-group">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                Znajdź produkt:
             </div>
-        }
+            <div class="col">
+                <input type="text" asp-for="SearchString" class="form-control" />
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-outline-primary">Szukaj</button>
+            </div>
+        </div>
     </div>
+</form>
+<div class="container-fluid">
+    @for (int i = (Model.PageNumber - 1) * 9; i < (Model.PageNumber - 1) * 9 + 9; i += 3)
+    {
+        <div class="row" style="height:200px;margin:20px 0 20px 0">
+            @if (i < Model.ProductsList.Count)
+            {
+                <div class="col" style="margin:0 10px 0 10px">
+                    <div class="container-fluid">
+                        <div class="row d-flex justify-content-center">
+                            @Model.ProductsList[i].ProductName
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
+                                    onclick="SetModalContent('@Model.ProductsList[i].ProductId','@Model.ProductsList[i].ProductName')">
+                                Dodaj do koszyka
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (i + 1 < Model.ProductsList.Count)
+            {
+                <div class="col" style="margin:0 10px 0 10px">
+                    <div class="container-fluid">
+                        <div class="row d-flex justify-content-center">
+                            @Model.ProductsList[i + 1].ProductName
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
+                                    onclick="SetModalContent('@Model.ProductsList[i+1].ProductId','@Model.ProductsList[i+1].ProductName')">
+                                Dodaj do koszyka
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (i + 2 < Model.ProductsList.Count)
+            {
+                <div class="col" style="margin:0 10px 0 10px">
+                    <div class="container-fluid">
+                        <div class="row d-flex justify-content-center">
+                            @Model.ProductsList[i + 2].ProductName
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
+                        </div>
+                        <div class="row d-flex justify-content-center">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
+                                    onclick="SetModalContent('@Model.ProductsList[i+2].ProductId','@Model.ProductsList[i+2].ProductName')">
+                                Dodaj do koszyka
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
-    <div>
-        <nav aria-label="...">
-            <ul class="pagination justify-content-center">
-                @for (int i = 0; i <= Model.ProductsList.Count / 9; i++)
+<div>
+    <nav aria-label="...">
+        <ul class="pagination justify-content-center">
+            @for (int i = 0; i <= Model.ProductsList.Count / 9; i++)
+            {
+                if (Model.PageNumber == i + 1)
                 {
-                    if (Model.PageNumber == i + 1)
-                    {
-                        <li class="page-item active">
-                            <a class="page-link" href="/Products/@(i+1)">@(i+1)<span class="sr-only">(current)</span></a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="page-item"><a class="page-link" href="/Products/@(i+1)">@(i+1)</a></li>
-                    }
+                    <li class="page-item active">
+                        <a class="page-link" href="/Products/@(i+1)">@(i+1)<span class="sr-only">(current)</span></a>
+                    </li>
                 }
-            </ul>
-        </nav>
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="/Products/@(i+1)">@(i+1)</a></li>
+                }
+            }
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Dodaj do koszyka</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" id="orderForm">
+                    <div class="form-group">
+                        <label for="productID">ID produktu</label>
+                        <input class="form-control" asp-for="ProductID" type="text" id="modalProductID" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Nazwa produktu</label>
+                        <input class="form-control" asp-for="ProductName" type="text" id="modalProductName" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label for="productID">Ilość</label>
+                        <input class="form-control" type="number" asp-for="ProductQuantity" id="modalProductQuantity" />
+                        <span asp-validation-for="ProductQuantity" class="text-danger"></span>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                <button onclick="SubmitForm()" type="button" class="btn btn-primary">Dodaj do koszyka</button>
+            </div>
+        </div>
     </div>
+</div>
 
+@section scripts{
+    <script>
+        function SetModalContent(productId, productName) {
+            document.getElementById("modalProductID").value = productId;
+            document.getElementById("modalProductName").value = productName;
+            document.getElementById("modalProductQuantity").value = 1;
+        }
 
+        function SubmitForm() {
+            document.getElementById("orderForm").submit();
+        }
+    </script>
+
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -25,7 +25,11 @@ namespace SparePartsWarehouse
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddSession();
+            services.AddSession( options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
             services.AddMemoryCache();
             services.AddDbContext<ModelContext>(options =>
             options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.30:51521/pdb1;"));

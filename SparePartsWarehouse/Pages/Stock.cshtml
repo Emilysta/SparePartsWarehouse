@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Http
 @model SparePartsWarehouse.Pages.StockModel
 @attribute [IgnoreAntiforgeryToken]
-@{ ViewData["Title"] = "Stock";
+@{ ViewData["Title"] = "Stan magazynowy";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";
@@ -12,16 +12,18 @@
         Layout = "_Layout";
     } }
 
-<h1>Stock</h1>
+<h1>
+    Stan magazynowy
+</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Stock[0].DetailName)
+                Element
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Stock[0].Quantity)
+                Ilość
             </th>
             <th></th>
         </tr>

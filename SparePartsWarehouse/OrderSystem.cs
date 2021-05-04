@@ -20,7 +20,7 @@ namespace SparePartsWarehouse
         /// </summary>
         /// <param name="purchaser">Purchaser to be put on invoice</param>
         /// <param name="orderItems">List of items to be ordered</param>
-        public static void MakeOrder(string purchaser, List<OrderItem> orderItems)
+        public static void MakeOrder(string purchaser, List<CartItem> orderItems)
         {
             new Thread(() =>
             {
@@ -31,19 +31,21 @@ namespace SparePartsWarehouse
                     InvoiceDate = DateTime.Now
                 });
                 _context.SaveChanges();
+
                 decimal invoiceId = _context.Invoices.OrderByDescending(x => x.InvoiceId).Select(x => x.InvoiceId).FirstOrDefault();
-                foreach (OrderItem item in orderItems)
+
+                foreach (CartItem item in orderItems)
                 {
-                    decimal productId = _context.Products.Where(x => x.ProductName == item.ItemName).Select(x => x.ProductId).FirstOrDefault();
                     _context.InvoiceItems.Add(new InvoiceItem
                     {
-                        ProductId = productId,
-                        ProductQuantity = item.Quantity,
+                        ProductId = item.ProductId,
+                        ProductQuantity = item.Count,
                         InvoiceId = invoiceId,
                         Invoice = invoice.Entity,
-                        Product = _context.Products.Where(x => x.ProductName == item.ItemName).First()
+                        Product = _context.Products.Where(x => x.ProductId == item.ProductId).First()
                     });
                 }
+
                 _context.SaveChanges();
                 _context.Dispose();
                 OrderMadeEvent?.Invoke();
