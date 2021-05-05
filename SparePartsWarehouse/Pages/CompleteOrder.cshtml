@@ -1,0 +1,70 @@
+﻿@page "{InvoiceID}"
+@using Microsoft.AspNetCore.Http;
+@model SparePartsWarehouse.Pages.CompleteOrderModel
+@{
+    ViewData["Title"] = "Zamówienie zakończone";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+
+
+<h1 class="text-center">Zamówienie nr @Model.InvoiceID złożone przez @Model.Purchaser zostało zakończone.</h1>
+<br />
+<h1 class="text-center">Zamówione produkty</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Zamówiony produkt
+            </th>
+            <th>
+                Ilość
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.OrderItemsList)
+        {
+            <tr>
+                <td>
+                    @product.ProductName
+                </td>
+                <td>
+                    @product.Count.ToString("0")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h1 class="text-center">Elementy potrzebne do skompletowania zamówienia</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Detal
+            </th>
+            <th>
+                Ilość
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var detail in Model.OrderDetailList)
+        {
+            <tr>
+                <td>
+                    @detail.DetailName
+                </td>
+                <td>
+                    @detail.Quantity
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

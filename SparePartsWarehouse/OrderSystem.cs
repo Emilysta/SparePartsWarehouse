@@ -24,33 +24,32 @@ namespace SparePartsWarehouse
         {
             new Thread(() =>
             {
-                ModelContext _context = new ModelContext();
-                var invoice = _context.Invoices.Add(new Invoice
+                using (var _context = new ModelContext())
                 {
-                    Purchaser = purchaser,
-                    InvoiceDate = DateTime.Now
-                });
-                _context.SaveChanges();
-
-                decimal invoiceId = _context.Invoices.OrderByDescending(x => x.InvoiceId).Select(x => x.InvoiceId).FirstOrDefault();
-
-                foreach (CartItem item in orderItems)
-                {
-                    _context.InvoiceItems.Add(new InvoiceItem
+                    var invoice = _context.Invoices.Add(new Invoice
                     {
-                        ProductId = item.ProductId,
-                        ProductQuantity = item.Count,
-                        InvoiceId = invoiceId,
-                        Invoice = invoice.Entity,
-                        Product = _context.Products.Where(x => x.ProductId == item.ProductId).First()
+                        Purchaser = purchaser,
+                        InvoiceDate = DateTime.Now
                     });
-                }
+                    _context.SaveChanges();
 
-                _context.SaveChanges();
-                _context.Dispose();
+                    decimal invoiceId = _context.Invoices.OrderByDescending(x => x.InvoiceId).Select(x => x.InvoiceId).FirstOrDefault();
+
+                    foreach (CartItem item in orderItems)
+                    {
+                        _context.InvoiceItems.Add(new InvoiceItem
+                        {
+                            ProductId = item.ProductId,
+                            ProductQuantity = item.Count,
+                            InvoiceId = invoiceId,
+                            Invoice = invoice.Entity,
+                            Product = _context.Products.Where(x => x.ProductId == item.ProductId).First()
+                        });
+                    }
+                    _context.SaveChanges();
+                }
                 OrderMadeEvent?.Invoke();
             }).Start();
-
         }
     }
 }

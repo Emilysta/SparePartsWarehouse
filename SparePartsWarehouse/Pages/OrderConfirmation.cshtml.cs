@@ -27,6 +27,11 @@ namespace SparePartsWarehouse.Pages
                 });
                 i++;
             }
+            Purchaser = purchaser;
+
+            Response.Cookies.Delete("CartList");
+            Response.Cookies.Delete("CartItemsCount");
+
             OrderSystem.MakeOrder(purchaser[0], ProductsList);
         }
     }

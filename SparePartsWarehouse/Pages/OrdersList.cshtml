@@ -41,6 +41,9 @@
                 <a asp-page="./InvoiceDetails" asp-route-id="@item.InvoiceId">Szczegóły zamówienia</a>
                 <a asp-page="./DeleteInvoice" asp-route-id="@item.InvoiceId">Usuń zamówienie</a>
             </td>
+            <td>
+                <a type="button" href="./CompleteOrder/@item.InvoiceId" class="btn btn-outline-primary">Zrealizuj zamówienie</a>
+            </td>
         </tr>
 }
     </tbody>
