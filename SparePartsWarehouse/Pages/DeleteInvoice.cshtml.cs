@@ -15,7 +15,7 @@ namespace SparePartsWarehouse.Pages
         private readonly SparePartsWarehouse.ModelContext _context;
         
         public Invoice invoice { get; set; }
-        public IList<InvoiceDetail> invoiceDetails { get; set; }
+        public IList<CartItem> invoiceDetails { get; set; }
 
         public DeleteInvoiceModel(SparePartsWarehouse.ModelContext context)
         {
@@ -28,13 +28,13 @@ namespace SparePartsWarehouse.Pages
             int.TryParse(s_id, out int id);
             invoice = _context.Invoices.Where(x => x.InvoiceId == id).First();
             var invoiceProducts = await _context.InvoiceItems.Where(x => x.InvoiceId == id).ToListAsync();
-            invoiceDetails = new List<InvoiceDetail>();
+            invoiceDetails = new List<CartItem>();
             foreach (var prod in invoiceProducts)
             {
-                invoiceDetails.Add(new InvoiceDetail
+                invoiceDetails.Add(new CartItem
                 {
-                    DetailName = _context.Products.Where(x => x.ProductId == prod.ProductId).First().ProductName,
-                    Quantity = (int)prod.ProductQuantity
+                    ProductName = _context.Products.Where(x => x.ProductId == prod.ProductId).First().ProductName,
+                    Count = (int)prod.ProductQuantity
                 });
             }
             _context.InvoiceItems.RemoveRange(invoiceProducts);

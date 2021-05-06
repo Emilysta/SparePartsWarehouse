@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Http
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Strona główna";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";

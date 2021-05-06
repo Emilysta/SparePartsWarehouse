@@ -15,32 +15,62 @@
 <h1 class="text-center">Szczegóły zamówienia</h1>
 
 
-<body>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Nazwa części
-                </th>
-                <th>
-                    Potrzebna ilość
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @{ if (Model.invoiceDetails.Any())
-                    foreach (var item in Model.invoiceDetails)
-                    {
-                    <tr>
-                        <td>
-                            @item.DetailName
-                        </td>
-                        <td>
-                            @item.Quantity
-                        </td>
-                    </tr>
-                    }
-                }
-        </tbody>
-    </table>
-</body>
+<h1 class="text-center">Zamówione produkty</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Zamówiony produkt
+            </th>
+            <th>
+                Ilość
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.OrderItemsList)
+            {
+                <tr>
+                    <td>
+                        @product.ProductName
+                    </td>
+                    <td>
+                        @product.Count
+                    </td>
+                </tr>
+            }
+    </tbody>
+</table>
+
+<h1 class="text-center">Wymagane części</h1>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>
+                Detal
+            </th>
+            <th>
+                Wymagana ilość
+            </th>
+            <th>
+                Stan magazynowy
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @for(int i=0; i < Model.OrderDetailList.Count; i++)
+            {
+                <tr>
+                    <td>
+                        @Model.OrderDetailList[i].DetailName
+                    </td>
+                    <td>
+                        @Model.OrderDetailList[i].Quantity
+                    </td>
+                    <td>
+                        @Model.OrderStockList[i].Quantity
+                    </td>
+                </tr>
+            }
+    </tbody>
+</table>
