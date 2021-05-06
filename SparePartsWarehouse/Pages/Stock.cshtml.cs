@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
+using SparePartsWarehouse.DatabaseClasses;
 
 namespace SparePartsWarehouse.Pages
 {

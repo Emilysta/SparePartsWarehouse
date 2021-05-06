@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace SparePartsWarehouse
+namespace SparePartsWarehouse.DatabaseClasses
 {
     public partial class Stock
     {

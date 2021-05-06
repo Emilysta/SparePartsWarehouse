@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using SparePartsWarehouse.DatabaseClasses;
 using SparePartsWarehouse.Pages;
 
 namespace SparePartsWarehouse
@@ -34,7 +35,7 @@ namespace SparePartsWarehouse
                     _context.SaveChanges();
 
                     decimal invoiceId = _context.Invoices.OrderByDescending(x => x.InvoiceId).Select(x => x.InvoiceId).FirstOrDefault();
-
+                    int i = 1;
                     foreach (CartItem item in orderItems)
                     {
                         _context.InvoiceItems.Add(new InvoiceItem
@@ -42,9 +43,9 @@ namespace SparePartsWarehouse
                             ProductId = item.ProductId,
                             ProductQuantity = item.Count,
                             InvoiceId = invoiceId,
-                            Invoice = invoice.Entity,
-                            Product = _context.Products.Where(x => x.ProductId == item.ProductId).First()
+                            InvoinceItemNumber = i
                         });
+                        i++;
                     }
                     _context.SaveChanges();
                 }

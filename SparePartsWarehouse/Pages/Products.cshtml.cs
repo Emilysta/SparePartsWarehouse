@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SparePartsWarehouse.DatabaseClasses;
 using SparePartsWarehouse.Pages;
 
 namespace SparePartsWarehouse
