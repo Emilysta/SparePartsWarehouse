@@ -44,8 +44,8 @@ namespace SparePartsWarehouse
             services.AddSingleton<IJobFactory, CustomQuartzJobFactory>();
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             services.AddSingleton<NotificationJob>();
-            services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob), "Notification Job", "0 0 17 ? * FRI")); // 0/10 * * * * ?
-            services.AddHostedService<CustomQuartzHostedService>(); //0 0 22 ? * FRI 
+            services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob), "Notification Job", "0 0 17 ? * FRI")); // 0/10 * * * * ? co 10 sekund
+            services.AddHostedService<CustomQuartzHostedService>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -51,7 +51,7 @@ namespace SparePartsWarehouse
                     if (detailsToOrder.Any(x => x.ItemId == prodDetail.DetailId))
                     {
                         var detailItem = detailsToOrder.Find(x => x.ItemId == prodDetail.DetailId);
-                        detailItem.Quantity += (int)prodDetail.DetailQuantity;
+                        detailItem.Quantity += (int)(prodDetail.DetailQuantity*item.ProductQuantity);
                     }
                     else
                     {
@@ -67,14 +67,13 @@ namespace SparePartsWarehouse
 
             for (int i = 0; i < detailsToOrder.Count; i++)
             {
-                DetailOrderItem detailOrderItem = detailsToOrder[i];
-                if (detailOrderItem.Quantity % 4 != 0)
+                if (detailsToOrder[i].Quantity % 4 != 0)
                 {
-                    detailOrderItem.Quantity = detailOrderItem.Quantity / 4 + 1;
+                    detailsToOrder[i].Quantity = detailsToOrder[i].Quantity / 4 + 1;
                 }
                 else
                 {
-                    detailOrderItem.Quantity = detailOrderItem.Quantity / 4;
+                    detailsToOrder[i].Quantity = detailsToOrder[i].Quantity / 4;
                 }
             }
 
