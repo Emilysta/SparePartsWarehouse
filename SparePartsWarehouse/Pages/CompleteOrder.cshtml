@@ -13,7 +13,7 @@
     }
 }
 
-@{ if (Model.CanOrderBeCompleted)
+@{ if (Model.IsEnoughToComplete)
     {
 
         <h1 class="text-center">Zamówienie nr @Model.InvoiceID złożone przez @Model.Purchaser zostało zakończone.</h1>

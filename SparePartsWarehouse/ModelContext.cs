@@ -26,6 +26,8 @@ namespace SparePartsWarehouse
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Stock> Stocks { get; set; }
 
+
+        public static bool IsCompletingOrder = false;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
