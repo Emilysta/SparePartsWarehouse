@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace SparePartsWarehouse
+namespace SparePartsWarehouse.DatabaseClasses
 {
     public partial class Detail
     {
         public decimal DetailId { get; set; }
         public string DetailName { get; set; }
-
-        public virtual ProdSpecification ProdSpecification { get; set; }
     }
 }

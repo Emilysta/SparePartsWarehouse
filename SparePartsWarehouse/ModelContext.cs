@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SparePartsWarehouse.DatabaseClasses;
 
 #nullable disable
 
@@ -18,6 +19,7 @@ namespace SparePartsWarehouse
         }
 
         public virtual DbSet<Detail> Details { get; set; }
+        public virtual DbSet<HistoricalInvoice> HistoricalInvoices { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceItem> InvoiceItems { get; set; }
         public virtual DbSet<ProdSpecification> ProdSpecifications { get; set; }
@@ -28,7 +30,7 @@ namespace SparePartsWarehouse
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.31:1521/warehousepdb;");
+                optionsBuilder.UseOracle("User ID=admin;Password=lolp19;Data Source=serwer.lan:51521/pdb1;");
             }
         }
 
@@ -52,6 +54,27 @@ namespace SparePartsWarehouse
                     .HasColumnName("DETAIL_NAME");
             });
 
+            modelBuilder.Entity<HistoricalInvoice>(entity =>
+            {
+                entity.HasKey(e => e.InvoiceId)
+                    .HasName("HISTORICAL_INVOICES_PK");
+
+                entity.ToTable("HISTORICAL_INVOICES");
+
+                entity.Property(e => e.InvoiceId)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("INVOICE_ID");
+
+                entity.Property(e => e.InvoiceDate)
+                    .HasColumnType("DATE")
+                    .HasColumnName("INVOICE_DATE");
+
+                entity.Property(e => e.Purchaser)
+                    .HasMaxLength(200)
+                    .IsUnicode(false)
+                    .HasColumnName("PURCHASER");
+            });
+
             modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.ToTable("INVOICES");
@@ -73,13 +96,23 @@ namespace SparePartsWarehouse
 
             modelBuilder.Entity<InvoiceItem>(entity =>
             {
-                entity.HasKey(e => e.Key).HasName("KEY");
+                entity.HasKey(e => e.Key)
+                    .HasName("SYS_C007315");
 
                 entity.ToTable("INVOICE_ITEMS");
+
+                entity.Property(e => e.Key)
+                    .HasColumnType("NUMBER")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("KEY");
 
                 entity.Property(e => e.InvoiceId)
                     .HasColumnType("NUMBER")
                     .HasColumnName("INVOICE_ID");
+
+                entity.Property(e => e.InvoinceItemNumber)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("INVOINCE_ITEM_NUMBER");
 
                 entity.Property(e => e.ProductId)
                     .HasColumnType("NUMBER")
@@ -88,29 +121,11 @@ namespace SparePartsWarehouse
                 entity.Property(e => e.ProductQuantity)
                     .HasColumnType("NUMBER")
                     .HasColumnName("PRODUCT_QUANTITY");
-
-                entity.Property(e => e.Key)
-                    .HasColumnType("NUMBER")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("KEY");
-
-                entity.HasOne(d => d.Invoice)
-                    .WithMany()
-                    .HasForeignKey(d => d.InvoiceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("INVOICE_FK");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany()
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("PRODUCT_FK");
             });
 
             modelBuilder.Entity<ProdSpecification>(entity =>
             {
-                entity.HasKey(e => e.DetailId)
-                    .HasName("SPEC_PK");
+                entity.HasNoKey();
 
                 entity.ToTable("PROD_SPECIFICATION");
 
@@ -125,18 +140,6 @@ namespace SparePartsWarehouse
                 entity.Property(e => e.ProductId)
                     .HasColumnType("NUMBER")
                     .HasColumnName("PRODUCT_ID");
-
-                entity.HasOne(d => d.Detail)
-                    .WithOne(p => p.ProdSpecification)
-                    .HasForeignKey<ProdSpecification>(d => d.DetailId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("SPEC_DETAIL_FK");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.ProdSpecifications)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("SPEC_PROD_FK");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -157,7 +160,7 @@ namespace SparePartsWarehouse
             modelBuilder.Entity<Stock>(entity =>
             {
                 entity.HasKey(e => e.DetailId)
-                    .HasName("STOCK_PK");
+                    .HasName("SYS_C007329");
 
                 entity.ToTable("STOCK");
 
@@ -175,9 +178,13 @@ namespace SparePartsWarehouse
                     .HasColumnName("QUANTITY");
             });
 
-            modelBuilder.HasSequence("INVOICE_ID_SEQUENCE");
             modelBuilder.HasSequence("DETAIL_ID_SEQUENCE");
-            modelBuilder.HasSequence("PRODUCT_ID_SEQUENCE");
+
+            modelBuilder.HasSequence("INVOICE_ID_SEQUENCE");
+
+            modelBuilder.HasSequence("INVOICE_ITEM_SEQUENCE");
+
+            modelBuilder.HasSequence("PRODUCTS_SEQUENCE1");
 
             OnModelCreatingPartial(modelBuilder);
         }

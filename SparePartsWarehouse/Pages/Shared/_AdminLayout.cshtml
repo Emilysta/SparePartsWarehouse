@@ -9,7 +9,6 @@
 </head>
 <body>
     <header>
-        <script type="text/javascript" src="~/js/site.js"></script>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">Strona główna</a>
@@ -18,33 +17,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Products">Produkty</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/OrdersList">Przeglądaj zamównienia</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/DetailsOrder">Zamów części dodatkowe</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Stock">Stany magazynowe</a>
+                        </li>
                     </ul>
                 </div>
-
-                <div class="column" style="margin-right:40px">
-                    <a class="text-dark" asp-area="" asp-page="/Cart">
-                        <div class="row">
-                            <img class="rounded mx-auto d-block" height="30" src="~/images/shoping_cart.png" />
-                            <span class="badge badge-light" id="cartItemsNumber"></span>
-                        </div>
-                        <div class="row">
-                            Koszyk
-                        </div>
-                        <script type="text/javascript">
-                            var badge = document.getElementById("cartItemsNumber");
-                            var count = getCookie("CartItemsCount");
-                            badge.innerHTML = count;
-                        </script>
-                    </a>
-                </div>
-                <div class="column">
-                    <a class="navbar-brand" asp-area="" asp-page="/Login" margin="10">Zaloguj</a>
-                </div>
-
+                <a class="navbar-brand" asp-area="" asp-page="/Logout">Wyloguj</a>
             </div>
         </nav>
     </header>
-
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

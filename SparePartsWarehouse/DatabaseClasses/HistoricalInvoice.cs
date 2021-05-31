@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SparePartsWarehouse.DatabaseClasses
 {
-    public partial class Invoice
+    public partial class HistoricalInvoice
     {
         public decimal InvoiceId { get; set; }
         public DateTime InvoiceDate { get; set; }

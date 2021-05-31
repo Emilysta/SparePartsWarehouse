@@ -1,0 +1,50 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.OrdersListModel
+
+@{
+    ViewData["Title"] = "Lista zamówień";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+
+<h1 class="text-center">Lista zamówień</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Data
+            </th>
+            <th>
+                Zamawiający
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Invoice) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.InvoiceDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Purchaser)
+            </td>
+            <td>
+                <a asp-page="./InvoiceDetails" asp-route-id="@item.InvoiceId">Szczegóły zamówienia</a>
+                <a asp-page="./DeleteInvoice" asp-route-id="@item.InvoiceId">Usuń zamówienie</a>
+            </td>
+            <td>
+                <a type="button" href="./CompleteOrder/@item.InvoiceId" class="btn btn-outline-primary">Zrealizuj zamówienie</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

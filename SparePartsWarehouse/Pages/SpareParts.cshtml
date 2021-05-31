@@ -1,7 +1,16 @@
 ﻿@page "{id:int}"
+@using Microsoft.AspNetCore.Http
 @model SparePartsModel
 @{
     ViewData["Title"] = "Części zamienne";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 }
 
 <body>

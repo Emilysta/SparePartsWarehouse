@@ -1,0 +1,44 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.StockModel
+@attribute [IgnoreAntiforgeryToken]
+@{ ViewData["Title"] = "Stan magazynowy";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    } }
+
+<h1>
+    Stan magazynowy
+</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Element
+            </th>
+            <th>
+                Ilość
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Stock)
+        {
+<tr>
+    <td>
+        @item.DetailName
+    </td>
+    <td>
+        @item.Quantity.ToString("0")
+    </td>
+</tr>
+}
+    </tbody>
+</table>

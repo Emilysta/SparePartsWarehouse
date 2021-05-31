@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
-namespace SparePartsWarehouse
+namespace SparePartsWarehouse.DatabaseClasses
 {
     public partial class Stock
     {
         public decimal DetailId { get; set; }
         public string DetailName { get; set; }
+        [ConcurrencyCheck]
         public decimal Quantity { get; set; }
     }
 }

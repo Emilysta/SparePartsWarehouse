@@ -1,0 +1,73 @@
+﻿@page
+@using Microsoft.AspNetCore.Http;
+@attribute [IgnoreAntiforgeryToken]
+@model SparePartsWarehouse.Pages.CartModel
+@{ ViewData["Title"] = "Koszyk";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    } }
+<body>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Nazwa produktu
+                </th>
+                <th>
+                    Ilość
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CartItem item in Model.OrderItems)
+            {
+                <tr>
+                    <td>
+                        @item.ProductId
+                    </td>
+                    <td>
+                        @item.ProductName
+                    </td>
+                    <td>
+                        @item.Count
+                    </td>
+                    <td>
+                        <form method="post">
+                            <input type="hidden" name="productID" value="@item.ProductId" />
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+    <div class="container">
+
+        <form action="OrderConfirmation" method="post" class="text-right">
+            @foreach (CartItem item in Model.OrderItems)
+            {
+                <input type="hidden" name="ProductID" value="@item.ProductId" />
+                <input type="hidden" name="ProductName" value="@item.ProductName" />
+                <input type="hidden" name="Quantity" value="@item.Count" />
+            }
+            <div class="form-group align-middle">
+                <label for="PurchaserInput">Zamawiający:</label>
+                <input type="text" id="PurchaserInput" name="Purchaser" />
+                <button type="submit" class="btn btn-primary">Zamów</button>
+            </div>
+        </form>
+    </div>
+</body>

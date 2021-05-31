@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,19 +27,34 @@ namespace SparePartsWarehouse
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var scheduler = StdSchedulerFactory.GetDefaultScheduler().GetAwaiter().GetResult();
+            services.AddSingleton(scheduler);
+            //services.AddHostedService<CustomQuartzHostedService>();
             services.AddRazorPages();
-
+            services.AddSession( options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
+            services.AddMemoryCache();
             services.AddDbContext<ModelContext>(options =>
-            options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.31:1521/warehousepdb;"));
+            options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.30:51521/pdb1;"));
+
+            services.AddControllers();
+            services.AddSingleton<IJobFactory, CustomQuartzJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            services.AddSingleton<NotificationJob>();
+            services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob), "Notification Job", "0 0 17 ? * FRI")); // 0/10 * * * * ? co 10 sekund
+            services.AddHostedService<CustomQuartzHostedService>(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseBrowserLink();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
             else
             {
@@ -51,7 +69,7 @@ namespace SparePartsWarehouse
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

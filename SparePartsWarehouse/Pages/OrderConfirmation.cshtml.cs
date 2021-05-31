@@ -1,38 +1,37 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using SparePartsWarehouse;
+using Microsoft.Extensions.Primitives;
 
 namespace SparePartsWarehouse.Pages
 {
-    public struct OrderItem
-    {
-        public string ItemName;
-        public int Quantity;
-    }
+
     public class OrderConfirmationModel : PageModel
     {
-        public List<OrderItem> ProductsList { get; set; }
+        public List<CartItem> ProductsList { get; set; }
         public string Purchaser { get; set; }
         public void OnPost()
         {
-            Request.Form.TryGetValue("Purchaser", out Microsoft.Extensions.Primitives.StringValues purchaser);
-            Request.Form.TryGetValue("Product", out Microsoft.Extensions.Primitives.StringValues products);
-            Request.Form.TryGetValue("Quantity", out Microsoft.Extensions.Primitives.StringValues quantities);
-            ProductsList = new List<OrderItem>();
+            Request.Form.TryGetValue("Purchaser", out StringValues purchaser);
+            Request.Form.TryGetValue("ProductID", out StringValues productIDs);
+            Request.Form.TryGetValue("ProductName", out StringValues productNames);
+            Request.Form.TryGetValue("Quantity", out StringValues quantities);
+            ProductsList = new List<CartItem>();
             int i = 0;
-            foreach (string s in products)
+            foreach (string s in productIDs)
             {
-                ProductsList.Add(new OrderItem
+                ProductsList.Add(new CartItem
                 {
-                    ItemName = products[i],
-                    Quantity = int.Parse(quantities[i])
+                    ProductId = int.Parse(productIDs[i]),
+                    ProductName = productNames[i],
+                    Count = int.Parse(quantities[i])
                 });
                 i++;
             }
+            Purchaser = purchaser;
+
+            Response.Cookies.Delete("CartList");
+            Response.Cookies.Delete("CartItemsCount");
+
             OrderSystem.MakeOrder(purchaser[0], ProductsList);
         }
     }

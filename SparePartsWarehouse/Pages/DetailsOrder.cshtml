@@ -1,0 +1,56 @@
+﻿@page
+@using Microsoft.AspNetCore.Http
+@model SparePartsWarehouse.Pages.DetailsOrderModel
+@{
+    ViewData["Title"] = "Zamawianie części";
+    if (HttpContext.Session.GetString("user") == "admin")
+    {
+        Layout = "_AdminLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+}
+<h2>Dodaj elementy do zamówienia: </h2>
+<form method="post" action="Stock">
+    <div class="form-group">
+        <div id="container">
+            <div id="DetailNode">
+                <select id="selectNode" name="Detail" asp-items="Model.DetailsNames">
+            <option value="">-Wybierz odpowiednią część-</option>
+        </select>
+                <label>Ilość:</label>
+                <input type="text" name="Quantity" class="form-control" asp-for="Quantity" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+                <br />
+            </div>
+        </div>
+        <div>
+            <button onclick="AddNewOrderItem()" type="button">+</button>
+            <button onclick="RemoveOrderItem()" type="button">-</button><br /><br />
+            <input type="submit" value="Zamów">
+        </div>
+    </div>
+</form>
+
+@section scripts{
+    <script>
+        function AddNewOrderItem() {
+            var container = document.getElementById("container");
+            if (container.childElementCount < 10) {
+                var node = document.getElementById("DetailNode");
+                var item = node.cloneNode(true);
+                container.appendChild(item);
+            }
+        }
+        function RemoveOrderItem() {
+            var container = document.getElementById("container")
+            if (container.childElementCount > 1) {
+                var lastNode = container.lastChild;
+                lastNode.remove();
+            }
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}
