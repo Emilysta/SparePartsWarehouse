@@ -18,7 +18,7 @@ namespace SparePartsWarehouse
         public Task Execute(IJobExecutionContext context)
         {
             _logger.LogInformation("Tygodniowe zamówienie części");
-            AutomaticOrderSystem.OrderWeeklyAverageConsumption();
+            CheckStockSystem.Run();
             return Task.CompletedTask;
         }
     }
