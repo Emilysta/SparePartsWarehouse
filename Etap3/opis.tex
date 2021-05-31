@@ -13,6 +13,7 @@
 \usepackage{sectsty}
 \usepackage{titlesec}
 \usepackage{caption}
+\usepackage{hyperref}
 \titlelabel{\thetitle.\quad}
 \definecolor{Myblue}{rgb}{0.14,0.4,0.74}
 \definecolor{Myblue2}{rgb}{0.14,0.6,0.84}
@@ -397,19 +398,19 @@ danych przez poszczególnych użytkowników jest moment wydawania gotowych
 zamówień. Taka procedura składa się z następujących kroków:
 \begin{enumerate}
    \item Sprawdzenie czy na magazynie znajduje się wystarczająca ilość detali
-   (wyrażenie ``SELECT ...''),
-   \begin{enumerate}
-      \item Jeśli produktów jest za mało, wyświetlamy komunikat o błędzie, i nie
-      zmieniamy nic w bazie danych,
-      \item Jeśli produktów jest wystarczająca ilość, przechodzimy do kroku 2.
-   \end{enumerate}
+         (wyrażenie ``SELECT ...''),
+         \begin{enumerate}
+            \item Jeśli produktów jest za mało, wyświetlamy komunikat o błędzie, i nie
+                  zmieniamy nic w bazie danych,
+            \item Jeśli produktów jest wystarczająca ilość, przechodzimy do kroku 2.
+         \end{enumerate}
    \item Blokujemy dostęp do tabel w trybie ekskluzywnym (Jeśli nikt inny tego wcześniej nie zrobił),
    \item Wywołujemy procedurę ``COMPLETE\_ORDER'' która pomniejsza stany
-   magazynowe poszczególnych detali o wymaganą ilość, przenosi zamówienie do
-   tabeli historycznych zamówień oraz usuwa z magazynu wszystkie produkty,
-   których ilość jest równa 0.
+         magazynowe poszczególnych detali o wymaganą ilość, przenosi zamówienie do
+         tabeli historycznych zamówień oraz usuwa z magazynu wszystkie produkty,
+         których ilość jest równa 0.
    \item Zwalniamy ekskluzywną blokadę na tabelach
-\end{enumerate} 
+\end{enumerate}
 Poniżej przedstawione są dwie procedury, które korzystają z blokowania tabel w
 celu wykonania operacji UPDATE oraz DELETE
 \begin{lstlisting}[language=sql, frame=single,tabsize=1,breaklines=true,caption={Procedura COMPLETE\_ORDER}]
@@ -480,24 +481,70 @@ while (ModelContext.IsCompletingOrder)
 \end{lstlisting}
 
 \section{Testowanie}
-\paragraph{}
-Aby przetestować działanie aplikacji wprowadziliśmy testy jednostkowe do poszczególnych funkcji w
-programie.
-Najistotniesze działanie mają funkcje pobierające dane od użytkownika i przekształcające je do
-odpowiedniego formatu, a nastepnie przekazujące dane do zapisu do bazy danych.
-
 \subsection{Testowanie procedur w bazie danych}
 Testowanie procedur zostało przeprowadzone wprost z konsoli. Procedura
 archiwizacji jest wywoływana wprost z procedury kompletowania i kończenia
 zamówienia, dlatego były one testowe jednocześnie. Wywołanie odbyło się przez
 komendę:
 \begin{lstlisting}[language=sql]
-   EXECUTE COMPLETE\_ORDER(33);
+   EXECUTE COMPLETE_ORDER(33);
 \end{lstlisting}
+Zgodnie z założeniami, stany magazynowe zostało pomniejszone o odpowiednią ilość
+detali, oraz samo zamówienie zostało przeniesione do tabeli zamówień
+historycznych.
 
+\subsection{Testowanie interfejsu użytkownika}
+Testowanie interfejsu zamawiania produktów rozpoczęliśmy od sprawdzenia
+walidacji wszystkich pól, które muszą zostać wypełnione przez użytkownika.
+Pozwoliło to wyeliminować wszelkie błędy związane z niepoprawnie wprowadzonymi
+danymi.
 
+\subsubsection{Strona ``Produkty'' oraz dodawanie produktów do koszyka}
+Pole
+ilości zamawianych produktów musi zawierać tylko liczby większe od 0, co
+przetestowaliśmy próbując wpisać wartości ujemne lub litery i znaki. Taka
+walidacja jest przeprowadzana zarówno po stronie klienta, jak i serwera. W razie
+przekazania w formularzu ilości produktów mniejszej od 0 lub w innej postaci, to
+polecenie nie jest wykonywane.
 
+\subsubsection{Koszyk}
+Następną testowaną funkcjonalnością był koszyk, z którego bezprośrednio składamy
+zamówienia. Wymagana jest walidacja dwóch rzeczy:
+\begin{itemize}
+   \item W koszyku znajduje się conajmniej jeden produkt,
+   \item Pole ``Zamawiający'' nie jest puste.
+\end{itemize}
+W przypadku gdy koszyk jest pusty, przycisk ``Zamów'' jest nieaktywny co pozwoliło
+zabezpieczyć przed potencjalnie pustymi zamówieniami. Pole ``Zamawiający'' zostało
+oznaczone jako \textit{required}, co sprawiło że strona nie może zostać zatwierdzona
+tak długo dopóki w formularzu nie zostanie uzupełnione pole ``Zamawiający''. W przypadku
+ingerencji w kod strony, to samo sprawdzenie wykonywane jest po stronie serwera
+przed ostatecznym złożeniem zamówienia. W przypadku gdy któreś sprawdzenie
+walidacyjne nie zostanie potwierdzone, następuje natychmiastowe porzucenie
+aktualnego koszyka oraz przeniesienie do strony głównej.
 
+\subsubsection{Zamawianie części zamiennych przez administratorów}
+Ostatnim miejscem, w którym należało przeprowadzać walidację wprowadzanych
+danych jest panel domawiania części przez administratorów aby uzupełnić stany
+magazynowe. Typ zamawianego produktu jest wybierany z rozwijanej listy
+dostępnych produktów, co pozwala uniknąć walidacji tego pola ze względu na brak
+możliwości przekazania innych danych. Pole ilości zamawianych części musi
+zawierać liczbę większą od 0. Oznacza to że nie mogą się tam znaleźć żadne
+litery ani znaki. Walidacja w tym wypadku również jest przeprowadzana po stronie
+klienta, w postaci ograniczeń wartości wpisywanych do pola oraz po stronie
+serwera już po przesłaniu formularza.
+
+\subsection{Testowanie funkcjonalności systemu automatycznego zamawiania}
+
+\subsection{Testowanie dostępu wielu osób jednocześnie}
+W celu przetestowania dostępu wielu osób do bazy danych jednocześnie
+skorzystaliśmy z narzędzia
+dostępnego na stronie \textit{loader.io}. Pozwala ono na testowanie odpowiedzi
+serwerów pod różnyn obciążeniem. Testy zostały przeprowadzone na stronie z
+produktami, w taki sposób aby każde zapytanie wyszukiwało produkty w bazie
+danych po ich nazwie. Wymagało to odpowiedzi ze strony bazy danych do każdego
+zapytania. Testy zostały przeprowadzone od 10 do 100 zapytań jednocześnie na
+przestrzeni 1 minuty. Wszystkie odpowiedzi były poprawne.
 
 \section{Prezentacja ostatecznego wyglądu aplikacji}
 \subsection{Widok zwykłego użytkownika}

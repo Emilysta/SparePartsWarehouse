@@ -15,6 +15,13 @@ namespace SparePartsWarehouse.Pages
             Request.Form.TryGetValue("ProductID", out StringValues productIDs);
             Request.Form.TryGetValue("ProductName", out StringValues productNames);
             Request.Form.TryGetValue("Quantity", out StringValues quantities);
+
+            if (purchaser.Count == 0)
+                Redirect("~/Index");
+            if (purchaser[0] != "" && purchaser[0] != null)
+                Redirect("~/Index");
+
+
             ProductsList = new List<CartItem>();
             int i = 0;
             foreach (string s in productIDs)
@@ -27,6 +34,8 @@ namespace SparePartsWarehouse.Pages
                 });
                 i++;
             }
+            if (ProductsList.Count == 0)
+                Redirect("~/Index");
             Purchaser = purchaser;
 
             Response.Cookies.Delete("CartList");

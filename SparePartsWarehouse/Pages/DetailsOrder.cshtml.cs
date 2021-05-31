@@ -14,8 +14,8 @@ namespace SparePartsWarehouse.Pages
         [Required]
         [RegularExpression("^[1-9][0-9]*$", ErrorMessage = "Ilość może zawierać tylko liczby większe od 0")]
         public int Quantity { get; set; }
-        
-        [BindProperty(SupportsGet =true)]
+
+        [BindProperty(SupportsGet = true)]
         public List<DetailOrderItem> detailsList { get; set; }
 
         [Required]
@@ -30,7 +30,7 @@ namespace SparePartsWarehouse.Pages
         }
         public void OnGet()
         {
-           DetailsNames = GetDetails();
+            DetailsNames = GetDetails();
             _context.Dispose();
         }
 
@@ -42,10 +42,13 @@ namespace SparePartsWarehouse.Pages
             int i = 0;
             foreach (string s in details)
             {
+                int quantity = int.Parse(quantities[i]);
+                if (quantity <= 0)
+                    Redirect("~/Index");
                 detailsList.Add(new DetailOrderItem
                 {
                     ItemName = details[i],
-                    Quantity = int.Parse(quantities[i])
+                    Quantity = quantity
                 });
                 i++;
             }
