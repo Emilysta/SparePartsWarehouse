@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
 using SparePartsWarehouse.DatabaseClasses;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace SparePartsWarehouse.Pages
 {
@@ -19,6 +19,8 @@ namespace SparePartsWarehouse.Pages
         public List<CartItem> OrderItemsList { get; set; }
 
         public List<Stock> OrderDetailList { get; set; }
+
+        public bool CanOrderBeCompleted { get; set; }
 
         private ModelContext m_context;
         public CompleteOrderModel(ModelContext context) => m_context = context;
@@ -53,21 +55,34 @@ namespace SparePartsWarehouse.Pages
                     }
                 }
             }
-            using (var connection = m_context.Database.GetDbConnection())
+            CanOrderBeCompleted = true;
+            foreach (var item in OrderDetailList)
+                if (item.Quantity > m_context.Stocks.Where(x => x.DetailId == item.DetailId).First().Quantity)
+                    CanOrderBeCompleted = false;
+            
+            if (CanOrderBeCompleted)
             {
-                connection.Open();
-                var cmd = connection.CreateCommand() as OracleCommand;
-                cmd.CommandText = "COMPLETE_ORDER";
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-                OracleParameter param1 = new OracleParameter("ORDER_INVOICE_ID", InvoiceID);
-                cmd.Parameters.Add(param1);
-
-                var i = cmd.ExecuteNonQuery();
-                Debug.WriteLine("Rows affected: " + i);
-                connection.Close();
+                using (var connection = m_context.Database.GetDbConnection())
+                {
+                    connection.Open();
+                    var cmd = connection.CreateCommand() as OracleCommand;
+                    cmd.CommandText = "COMPLETE_ORDER";
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    OracleParameter param1 = new OracleParameter("ORDER_INVOICE_ID", InvoiceID);
+                    cmd.Parameters.Add(param1);
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
             }
-            m_context.SaveChanges();
+            try
+            {
+                m_context.SaveChanges();
+            }
+            catch
+            {
+                CanOrderBeCompleted = false;
+                Debug.WriteLine("Nie udalo sie :(");
+            }
         }
     }
 }

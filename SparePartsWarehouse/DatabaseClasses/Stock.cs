@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -9,6 +8,7 @@ namespace SparePartsWarehouse.DatabaseClasses
     {
         public decimal DetailId { get; set; }
         public string DetailName { get; set; }
+        [ConcurrencyCheck]
         public decimal Quantity { get; set; }
     }
 }
