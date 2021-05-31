@@ -2,7 +2,8 @@
 @using Microsoft.AspNetCore.Http;
 @attribute [IgnoreAntiforgeryToken]
 @model SparePartsWarehouse.Pages.CartModel
-@{ ViewData["Title"] = "Koszyk";
+@{
+    ViewData["Title"] = "Koszyk";
     if (HttpContext.Session.GetString("user") == "admin")
     {
         Layout = "_AdminLayout";
@@ -10,7 +11,9 @@
     else
     {
         Layout = "_Layout";
-    } }
+    } 
+}
+
 <body>
     <table class="table table-hover">
         <thead class="thead-dark">
@@ -63,11 +66,19 @@
                 <input type="hidden" name="ProductName" value="@item.ProductName" />
                 <input type="hidden" name="Quantity" value="@item.Count" />
             }
-            <div class="form-group align-middle">
-                <label for="PurchaserInput">Zamawiający:</label>
-                <input type="text" id="PurchaserInput" name="Purchaser" />
-                <button type="submit" class="btn btn-primary">Zamów</button>
-            </div>
+            @{
+                if (Model.OrderItems != null)
+                {
+                    if (Model.OrderItems.Count > 0)
+                    {
+                        <div class="form-group align-middle">
+                            <label for="PurchaserInput">Zamawiający:</label>
+                            <input type="text" id="PurchaserInput" name="Purchaser" required />
+                            <button type="submit" class="btn btn-primary">Zamów</button>
+                        </div>
+                    }
+                }
+            }
         </form>
     </div>
 </body>
