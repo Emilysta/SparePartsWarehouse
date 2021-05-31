@@ -486,6 +486,19 @@ programie.
 Najistotniesze działanie mają funkcje pobierające dane od użytkownika i przekształcające je do
 odpowiedniego formatu, a nastepnie przekazujące dane do zapisu do bazy danych.
 
+\subsection{Testowanie procedur w bazie danych}
+Testowanie procedur zostało przeprowadzone wprost z konsoli. Procedura
+archiwizacji jest wywoływana wprost z procedury kompletowania i kończenia
+zamówienia, dlatego były one testowe jednocześnie. Wywołanie odbyło się przez
+komendę:
+\begin{lstlisting}[language=sql]
+   EXECUTE COMPLETE\_ORDER(33);
+\end{lstlisting}
+
+
+
+
+
 \section{Prezentacja ostatecznego wyglądu aplikacji}
 \subsection{Widok zwykłego użytkownika}
 

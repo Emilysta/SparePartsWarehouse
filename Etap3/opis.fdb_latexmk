@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1622470076 "c:/Users/mkale/source/repos/Emilysta/SparePartsWarehouse/Etap3/opis.tex" "opis.pdf" "opis" 1622470079
+["pdflatex"] 1622483362 "c:/Users/mkale/source/repos/Emilysta/SparePartsWarehouse/Etap3/opis.tex" "opis.pdf" "opis" 1622483365
   "C:/Users/mkale/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1621007433 9407463 d724406be37ab04b945a09951e611033 ""
   "C:/Users/mkale/AppData/Local/MiKTeX/pdftex/config/pdftex.map" 1622463871 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/mkale/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc" 1254938640 2375 baa924870cfb487815765f9094cf3728 ""
@@ -108,12 +108,12 @@
   "Wyglad/szczegoly_zam2_admin.png" 1622460015 42154 a37f31c56b15d5afd93b5e6b80d3b8f0 ""
   "Wyglad/wylogowanie_admin.png" 1622460015 27771 04c0baa2131e14a6bb3aa9b6ab64f841 ""
   "Wyglad/zlozenie_zamowienia_uzytkownik.png" 1622460015 35627 6f069f658c8270c921221122f24e5e0b ""
-  "c:/Users/mkale/source/repos/Emilysta/SparePartsWarehouse/Etap3/opis.tex" 1622470075 28963 ccd06fd0d2f95f47e3a3f55cd17f2b46 ""
+  "c:/Users/mkale/source/repos/Emilysta/SparePartsWarehouse/Etap3/opis.tex" 1622483361 29340 07c9ac473034a6eddeef22ee163aa176 ""
   "diagram.png" 1622460015 121665 51688712866aa56ce076df5cd96155b9 ""
   "diagram_f.png" 1622460015 121323 a69586ae42e512878da0c579004b745d ""
-  "opis.aux" 1622470079 8130 f254e1cba743fc88dadabb74bd16afc9 "pdflatex"
-  "opis.tex" 1622470075 28963 ccd06fd0d2f95f47e3a3f55cd17f2b46 ""
+  "opis.aux" 1622483365 8257 c875b80dc75bcd0999de7fdb60134c0f "pdflatex"
+  "opis.tex" 1622483361 29340 07c9ac473034a6eddeef22ee163aa176 ""
   (generated)
-  "opis.aux"
   "opis.log"
+  "opis.aux"
   "opis.pdf"
