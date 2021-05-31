@@ -5,7 +5,7 @@ using SparePartsWarehouse.DatabaseClasses;
 
 namespace SparePartsWarehouse
 {
-    public struct DetailOrderItem
+    public class DetailOrderItem
     {
         public string ItemName;
         public int ItemId;

@@ -30,6 +30,7 @@
         </div>
     </div>
 </form>
+
 <div class="container-fluid">
     @for (int i = (Model.PageNumber - 1) * 9; i < (Model.PageNumber - 1) * 9 + 9; i += 3)
     {
@@ -45,10 +46,18 @@
                             <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
                         </div>
                         <div class="row d-flex justify-content-center">
+                            @if(Layout == "_Layout")
+                            {
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
                                     onclick="SetModalContent('@Model.ProductsList[i].ProductId','@Model.ProductsList[i].ProductName')">
                                 Dodaj do koszyka
                             </button>
+                            }else
+                            {
+                            <button type="button" class="btn btn-primary">
+                                <a href="/SpareParts/@Model.ProductsList[i].ProductId" class="btn btn-primary">Pokaż specyfikację</a>
+                            </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -64,10 +73,19 @@
                             <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
                         </div>
                         <div class="row d-flex justify-content-center">
+                            @if(Layout == "_Layout")
+                            {
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
                                     onclick="SetModalContent('@Model.ProductsList[i+1].ProductId','@Model.ProductsList[i+1].ProductName')">
                                 Dodaj do koszyka
                             </button>
+                            }
+                            else
+                            {
+                            <button type="button" class="btn btn-primary">
+                                <a href="/SpareParts/@Model.ProductsList[i+1].ProductId" class="btn btn-primary">Pokaż specyfikację</a>
+                            </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -83,14 +101,23 @@
                             <img src="~/images/Products/0.jpg" class="rounded img-fluid" style="max-width:100px;max-height:100px" />
                         </div>
                         <div class="row d-flex justify-content-center">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
-                                    onclick="SetModalContent('@Model.ProductsList[i+2].ProductId','@Model.ProductsList[i+2].ProductName')">
-                                Dodaj do koszyka
-                            </button>
+                            @if (Layout == "_Layout")
+                            {
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal"
+                                        onclick="SetModalContent('@Model.ProductsList[i+2].ProductId','@Model.ProductsList[i+2].ProductName')">
+                                    Dodaj do koszyka
+                                </button>
+                            }
+                            else
+                            {
+                        <button type="button" class="btn btn-primary">
+                            <a href="/SpareParts/@Model.ProductsList[i+2].ProductId" class="btn btn-primary">Pokaż specyfikację</a>
+                        </button>
+                            }
                         </div>
                     </div>
                 </div>
-            }
+            }     
         </div>
     }
 </div>
