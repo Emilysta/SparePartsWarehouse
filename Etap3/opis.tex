@@ -20,6 +20,8 @@
 \subsectionfont{\color{Myblue2}}
 \definecolor{codepurple}{HTML}{C42043}
 
+\renewcommand{\lstlistingname}{Kod}
+
 \begin{document}
 \begin{titlepage}
    \vspace*{80mm}
@@ -377,6 +379,105 @@ co tygodniowego wykonania uzupełnienia magazynu. Ostatnim krokiem w implementac
 implementacja zabezpieczeń bazy danych przed jednoczesnym zapisem użytkowników do tabel.
 Zabezpieczenie jest o tyle istotne, ponieważ zakładamy w naszym projekcie wielu administratorów/
 realizatorów zamówień.
+
+\subsection{System automatycznego zamawiania}
+
+\subsection{Zabezpieczenie operacji na bazie danych w przypadku wielu użytkowników}
+W celu zabezpieczenia bazy danych przed jednoczesnymn zapisem przez wielu
+użytkowników wymaga wpierw identyfikacja miejsc w których do takiej sytuacji
+może dojść. Operacje dodawania danych do tabel są domyślnie obsługiwane przez
+bazę danych Oracle poprzez stosowanie ekskluzywnej blokady rekordu - oznacza to,
+że inne operacje wykonywane na tej samej tabeli nie mogą zablokować jej na
+wyłączność. Taka operacja w połączeniu z uzyskiwaniem klucza głównego z
+sekwencji utworzonej w bazie danych pozwala na dodawanie wielu produktów w tym
+samym czasie.
+
+Jednym z miejsc, w których wymagana jest większa kontrola nad dostępem do bazy
+danych przez poszczególnych użytkowników jest moment wydawania gotowych
+zamówień. Taka procedura składa się z następujących kroków:
+\begin{enumerate}
+   \item Sprawdzenie czy na magazynie znajduje się wystarczająca ilość detali
+   (wyrażenie ``SELECT ...''),
+   \begin{enumerate}
+      \item Jeśli produktów jest za mało, wyświetlamy komunikat o błędzie, i nie
+      zmieniamy nic w bazie danych,
+      \item Jeśli produktów jest wystarczająca ilość, przechodzimy do kroku 2.
+   \end{enumerate}
+   \item Blokujemy dostęp do tabel w trybie ekskluzywnym (Jeśli nikt inny tego wcześniej nie zrobił),
+   \item Wywołujemy procedurę ``COMPLETE\_ORDER'' która pomniejsza stany
+   magazynowe poszczególnych detali o wymaganą ilość, przenosi zamówienie do
+   tabeli historycznych zamówień oraz usuwa z magazynu wszystkie produkty,
+   których ilość jest równa 0.
+   \item Zwalniamy ekskluzywną blokadę na tabelach
+\end{enumerate} 
+Poniżej przedstawione są dwie procedury, które korzystają z blokowania tabel w
+celu wykonania operacji UPDATE oraz DELETE
+\begin{lstlisting}[language=sql, frame=single,tabsize=1,breaklines=true,caption={Procedura COMPLETE\_ORDER}]
+   PROCEDURE "COMPLETE_ORDER" (
+  "ORDER_INVOICE_ID" IN NUMBER) AS
+
+BEGIN 
+	LOCK TABLE STOCK IN EXCLUSIVE MODE;
+	FOR i in (Select PRODUCT_ID,PRODUCT_QUANTITY From INVOICE_ITEMS Where Invoice_ID=ORDER_INVOICE_ID) LOOP
+		FOR j in (Select DETAIL_ID,DETAIL_QUANTITY From PROD_SPECIFICATION Where PRODUCT_ID = i.product_id) LOOP
+			UPDATE STOCK SET QUANTITY = QUANTITY - (i.product_quantity*j.detail_quantity) Where DETAIL_ID=j.detail_id;
+		END LOOP;
+	END LOOP;
+    ARCHIVE_INVOICE(ORDER_INVOICE_ID);
+	DELETE FROM STOCK WHERE QUANTITY = 0;
+	COMMIT;
+END;
+\end{lstlisting}
+\begin{lstlisting}[language=sql, frame=single,tabsize=1,breaklines=true, caption={Procedura ARCHIVE\_INVOICE}]
+   PROCEDURE "ARCHIVE_INVOICE" (
+   "OLD_INVOICE_ID" IN NUMBER ) AS 
+BEGIN
+  LOCK TABLE INVOICES, HISTORICAL_INVOICES IN EXCLUSIVE MODE;
+  INSERT INTO historical_invoices SELECT * FROM INVOICES WHERE invoices.invoice_id = OLD_INVOICE_ID;
+  DELETE FROM INVOICES WHERE invoices.invoice_id = OLD_INVOICE_ID;
+  COMMIT;
+END ARCHIVE_INVOICE;
+\end{lstlisting}
+\begin{lstlisting}[language=C, frame=single,tabsize=1,caption={Kod aplikacji wywołujący procedurę COMPLETE\_ORDER}]
+if (IsEnoughToComplete)
+   {
+      using (var connection = m_context.Database.GetDbConnection())
+      {
+         connection.Open();
+         var cmd = connection.CreateCommand() as OracleCommand;
+         cmd.CommandText = "COMPLETE_ORDER";
+         cmd.CommandType = System.Data.CommandType.StoredProcedure;
+         OracleParameter param1 = new OracleParameter("ORDER_INVOICE_ID", InvoiceID);
+         cmd.Parameters.Add(param1);
+         cmd.ExecuteNonQuery();
+         connection.Close();
+      }
+   }
+try
+   m_context.SaveChanges();
+catch
+   IsEnoughToComplete = false;
+\end{lstlisting}
+
+Dodatkowe zabezpieczenie zostało zaimplementowane na poziome samej aplikacji. W
+klasie odpowiedzialnej za dostęp do bazy danych dodane zostało publiczne pole
+statyczne \textit{IsCompletingOrder}, które jest sprawdzane przed wykonaniem
+procedury ``COMPLTE\_ORDER''. Taka implementacja zapewnia ochronę przed
+niepoprawnym zapisem danych na poziome samej aplikacji jak i również bazy
+danych. Implementacja pola statycznego pozwala również na uniknięcie sytuacji
+dead-lock.
+\begin{lstlisting}[language=C,frame=single]
+while (ModelContext.IsCompletingOrder)
+{
+   Thread.Sleep(20);
+   counter++;
+   if (counter == 10)
+   {
+      isTimeout=true;
+      break;
+   }
+}
+\end{lstlisting}
 
 \section{Testowanie}
 \paragraph{}

@@ -1,11 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Oracle.ManagedDataAccess.Client;
 using SparePartsWarehouse.DatabaseClasses;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
 namespace SparePartsWarehouse.Pages
 {
@@ -20,7 +20,7 @@ namespace SparePartsWarehouse.Pages
 
         public List<Stock> OrderDetailList { get; set; }
 
-        public bool CanOrderBeCompleted { get; set; }
+        public bool IsEnoughToComplete { get; set; }
 
         private ModelContext m_context;
         public CompleteOrderModel(ModelContext context) => m_context = context;
@@ -55,33 +55,56 @@ namespace SparePartsWarehouse.Pages
                     }
                 }
             }
-            CanOrderBeCompleted = true;
-            foreach (var item in OrderDetailList)
-                if (item.Quantity > m_context.Stocks.Where(x => x.DetailId == item.DetailId).First().Quantity)
-                    CanOrderBeCompleted = false;
-            
-            if (CanOrderBeCompleted)
+            int counter = 0;
+            bool isTimeout = false;
+            while (ModelContext.IsCompletingOrder)
             {
-                using (var connection = m_context.Database.GetDbConnection())
+                Thread.Sleep(20);
+                counter++;
+                if (counter == 10)
                 {
-                    connection.Open();
-                    var cmd = connection.CreateCommand() as OracleCommand;
-                    cmd.CommandText = "COMPLETE_ORDER";
-                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    OracleParameter param1 = new OracleParameter("ORDER_INVOICE_ID", InvoiceID);
-                    cmd.Parameters.Add(param1);
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
+                    isTimeout=true;
+                    break;
                 }
             }
-            try
+            if (!isTimeout)
             {
-                m_context.SaveChanges();
+                ModelContext.IsCompletingOrder = true;
+                IsEnoughToComplete = true;
+                foreach (var item in OrderDetailList)
+                    if (item.Quantity > m_context.Stocks.Where(x => x.DetailId == item.DetailId).First().Quantity)
+                    {
+                        IsEnoughToComplete = false;
+                        break;
+                    }
+
+                if (IsEnoughToComplete)
+                {
+                    using (var connection = m_context.Database.GetDbConnection())
+                    {
+                        connection.Open();
+                        var cmd = connection.CreateCommand() as OracleCommand;
+                        cmd.CommandText = "COMPLETE_ORDER";
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                        OracleParameter param1 = new OracleParameter("ORDER_INVOICE_ID", InvoiceID);
+                        cmd.Parameters.Add(param1);
+                        cmd.ExecuteNonQuery();
+                        connection.Close();
+                    }
+                }
+                try
+                {
+                    m_context.SaveChanges();
+                }
+                catch
+                {
+                    IsEnoughToComplete = false;
+                }
+                ModelContext.IsCompletingOrder = false;
             }
-            catch
+            else
             {
-                CanOrderBeCompleted = false;
-                Debug.WriteLine("Nie udalo sie :(");
+                IsEnoughToComplete=false;
             }
         }
     }
