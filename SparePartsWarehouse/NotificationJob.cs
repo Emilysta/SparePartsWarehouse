@@ -18,7 +18,22 @@ namespace SparePartsWarehouse
         public Task Execute(IJobExecutionContext context)
         {
             _logger.LogInformation("Tygodniowe zamówienie części");
-            CheckStockSystem.Run();
+            CheckStockSystem.CheckWeeklyStock();
+            return Task.CompletedTask;
+        }
+    }
+
+    public class NotificationJob2 : IJob
+    {
+        private readonly ILogger<NotificationJob> _logger;
+        public NotificationJob2(ILogger<NotificationJob> logger)
+        {
+            _logger = logger;
+        }
+        public Task Execute(IJobExecutionContext context)
+        {
+            _logger.LogInformation("Codzienne sprawdzanie ilości potrzebnych części");
+            CheckStockSystem.CheckTwiceADay();
             return Task.CompletedTask;
         }
     }

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +45,8 @@ namespace SparePartsWarehouse
             services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
             services.AddSingleton<NotificationJob>();
             services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob), "Notification Job", "0 0 17 ? * FRI")); // 0/10 * * * * ? co 10 sekund
+            services.AddSingleton<NotificationJob2>();
+            services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob2), "Notification Job2", "0 0 8,17 ? * MON-FRI")); //od poniedziałku do piątku o 8 i 17
             services.AddHostedService<CustomQuartzHostedService>(); 
         }
 
