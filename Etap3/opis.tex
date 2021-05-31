@@ -344,10 +344,10 @@ dodaliśmy również możliwość ręcznego zamawiania części do magazynu. Adm
 możliwość podglądu szczegółów dotyczących faktur oraz części potrzebnych do konkretnego zamówienia.
 Po pierwszych testach wprowadziliśmy zmiany w panelu użytkownika. Zamiast zamawiania produktów z
 rozwijanej listy wprowadziliśmy przeglądanie produktów kolejnymi stronami. Do produktów dodaliśmy
-zdjęcia oraz przycisk dodawania do koszyka wraz z ko nkretną ilością. W pasku nawigacyjnym
+zdjęcia oraz przycisk dodawania do koszyka wraz z konkretną ilością. W pasku nawigacyjnym
 umieściliśmy koszyk. Zaimplementowaliśmy dla niego osobną stronę prezentującą zawartość koszyka oraz
 zajmującą się ostatecznym składaniem zamówienia. Po konsulatcji, wprowadziliśmy dodatkową tabelę w
-bazie danych. Tabela słuzy do przechowywania historii zamówień. 
+bazie danych. Tabela służy do przechowywania historii zamówień.
 Poniżej przedstawiona jest ostateczna struktura bazy danych znajdującej się w naszym projekcie.
 \begin{figure}[H]
    \centering
@@ -372,18 +372,18 @@ automatycznego zamawiania na podstawie historii z ostatniego miesiąca. Oprócz 
 historycznej dodaliśmy również kolumnę w tabeli ``Invoice\_Items''. Służy ona do przypisania pozycji
 produktu na fakturze. Kolejnym krokiem była implementacja systemu automatycznego zamawiania. Funkcja ta jest oparta na przeszukiwaniu tabeli
 historycznej w celu uzyskania zamówień z ostatniego miesiąca oraz na ustawieniu odpowiedniej komendy
-w programie Cron. Służy od do ustalania harmonogramu wykonywania danych zadań, przykładowo do
+w programie Cron. Służy on do ustalania harmonogramu wykonywania danych zadań, przykładowo do
 co tygodniowego wykonania uzupełnienia magazynu. Ostatnim krokiem w implementacji projektu była
 implementacja zabezpieczeń bazy danych przed jednoczesnym zapisem użytkowników do tabel.
 Zabezpieczenie jest o tyle istotne, ponieważ zakładamy w naszym projekcie wielu administratorów/
-realizatorów zamówień. 
+realizatorów zamówień.
 
 \section{Testowanie}
 \paragraph{}
 Aby przetestować działanie aplikacji wprowadziliśmy testy jednostkowe do poszczególnych funkcji w
 programie.
 Najistotniesze działanie mają funkcje pobierające dane od użytkownika i przekształcające je do
-odpowiedniego formatu, a nastepnie przekazujące dane do zapisu do bazy danych. 
+odpowiedniego formatu, a nastepnie przekazujące dane do zapisu do bazy danych.
 
 \section{Prezentacja ostatecznego wyglądu aplikacji}
 \subsection{Widok zwykłego użytkownika}
@@ -394,12 +394,27 @@ odpowiedniego formatu, a nastepnie przekazujące dane do zapisu do bazy danych.
    \includegraphics[width=0.99\textwidth,frame]{Wyglad/powitanie_uzytkownik.png}
    \caption{Strona główna - strona powitania}
 \end{figure}
-Strona główna przedstawia widok, jaki widzimy zaraz po wejściu na stronę www naszego projektu. 
+Strona główna przedstawia widok, jaki widzimy zaraz po wejściu na stronę www naszego projektu.
 Na stronie widnieje powitanie. Poruszanie się po stronie zapewnione jest przez nas za pomocą paska
 nawigacyjnego. Numerem jeden w niebieskiej obramówce oznaczone jest miejsce nawigacji pomiędzy
 poszczególnymi stronami. Pod numerem dwa znajduje się przycisk przejścia do strony z koszykiem.
 Numer 3 jest przyciskiem logowania do panelu administratora.
 \subsubsection{Produkty}
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.7\textwidth,frame]{Wyglad/produkty.png}
+   \caption{Przegląd dostępnych produktów}
+\end{figure}
+\begin{figure}[h]
+   \centering
+   \includegraphics[width=0.4\textwidth,frame]{Wyglad/dodaj_koszyk.png}
+   \caption{Okno dodawania produktu do koszyka}
+\end{figure}
+Strona pozwalająca na przeglądanie produktów dostępnych do zakupu stanowi
+kluczową część naszego projektu. Potencjalni klienci mogą oglądać jakie produkty
+są dostępne do zamówienia oraz dodać je do koszyka z tego samego miejsca.
+Dodawanie do koszyka odbywa się na tej samej stronie, za pomocą okna modalnego,
+w którym możemy wybrać ilość produktów którą chcemy dodać do koszyka.
 
 \subsubsection{Koszyk}
 \begin{figure}[H]
@@ -411,11 +426,11 @@ Powyższe zdjęcie przedstawia stronę z zawartością koszyka. Składa się ona
 \begin{enumerate}
    \item Nazwa produktu - nazwa zamówionego przez użytkownika produktu.
    \item Pole z zamówioną ilością.
-   \item Przycisk do usuwania produktu z zamówienia. 
+   \item Przycisk do usuwania produktu z zamówienia.
    \item Pole Zamawiający - pole do wpisania informacji o zamawiającym.
    \item Przycisk zamów - przycisk potwierdzenia zamówienia. Po wciśnięciu tego przycisku następuje
-   przejście do strony potwierdzenia z informacją o zamówionych produktach.
-\end{enumerate} 
+         przejście do strony potwierdzenia z informacją o zamówionych produktach.
+\end{enumerate}
 
 \subsubsection{Potwierdzenie zamówienia}
 \begin{figure}[H]
@@ -431,7 +446,7 @@ pomarańczowej ramce przedstawiona jest lista zamówionych produktów.
 \begin{figure}[H]
    \centering
    \includegraphics[width=0.99\textwidth,frame]{Wyglad/logowanie_admin.png}
-   \caption{Pandel logowania do widoku administratora}
+   \caption{Panel logowania do widoku administratora}
 \end{figure}
 W miejsce ``Nazwa użytkownika'' oraz ``Hasło'' administrator musi podać prawidłowe dane. Po uzupełnieniu
 danych i naciśnięciu przycisku ``Zaloguj się'' następuje przekierowanie do pełnego widoku administratora.
@@ -447,6 +462,24 @@ zwykłego użytkownika. Poruszanie się również zapewnione jest poprzez pasek 
 funkcje/widoki, przyznane administratorowi opisane będą w następnych punktach.
 
 \subsubsection{Produkty}
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.8\textwidth,frame]{Wyglad/produkty_admin.png}
+   \caption{Widok strony podglądu produktów w układzie administratora}
+\end{figure}
+Strona wyświetlająca produkty w widoku administrora jest bardzo podobna do
+zwykłego podglądu - różnicą jest przycisk znajdujący się pod każdym produktem,
+który w przypadku administratora przekieruje nas na stronę specyfikacji
+produktu.
+
+\subsubsection{Specyfikacja produktu}
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.8\textwidth,frame]{Wyglad/spec.png}
+   \caption{Podgląd specyfikacji pojedynczego produktu}
+\end{figure}
+Strona wyświetlająca specyfikację produktu pozwala sprawdzić jakie części są
+wymagane dla danego produktu.
 
 \subsubsection{Przeglądaj zamówienia}
 \begin{figure}[H]
@@ -455,26 +488,28 @@ funkcje/widoki, przyznane administratorowi opisane będą w następnych punktach
    \caption{Strona zapewniająca podgląd listy złożonych zamówień}
 \end{figure}
 Widok tej strony pojawia się po wciśnięciu odpowiedniego przycisku w pasku nawigacyjnym.
-Administrato ma tutaj dostęp do listy złożonych zamówień. Oprócz tego może podejrzeć szczegóły
+Administrator ma tutaj dostęp do listy złożonych zamówień. Oprócz tego może podejrzeć szczegóły
 każdego zamówienia naciskając przycisk ``Szczegóły zamówienia''. Dodatkowo wyposażyliśmy
 administratora w możliwość usuwania złożonego zamówienia oraz możliwość realizacji zamówienia.
 Naciskając niebieski tekst ``Usuń zamówienie'' spowodujemy usunięcie konkretnego zamówienia z bazy
-danych. Naciśnięcie przycisku ``Zrealizuj zamówienie'' usuwamy zamówienie z bieżącej listy zamówień
-i przenosimy je do historycznej listy.
+danych. Naciśnięcie przycisku ``Zrealizuj zamówienie'' powoduje wywołanie
+procedury sprawdzającej wymagany stan magazynowy, i w przypadku wystarczających
+ilości są one usuwane z magazynu a samo zamówienie jest przenoszone do tabeli
+zamówień historycznych.
 
 \begin{itemize}
    \item Panel ``Szczegóły zamówienia''\\
-   \newline
-   \fbox{
-      \parbox[c]{0.92\textwidth}{
-      \centering
-      \includegraphics[width=0.6\textwidth]{Wyglad/szczegoly_zam1_admin.png}
-      \includegraphics[width=0.6\textwidth]{Wyglad/szczegoly_zam2_admin.png}
-      }}
-      \captionof{figure}{Strona zapewniająca podgląd listy złożonych zamówień}
-   W panelu ze szczegółami zamówienia administrator może podejrzeć ilości zamówionych produktów.
-   Oprócz tego wyświetlana jest lista wszystkich wymaganych części do konkretnego zamówienia w
-   zestawieniu z ilością dostępnych części na magazynie.
+         \newline
+         \fbox{
+            \parbox[c]{0.92\textwidth}{
+               \centering
+               \includegraphics[width=0.6\textwidth]{Wyglad/szczegoly_zam1_admin.png}
+               \includegraphics[width=0.6\textwidth]{Wyglad/szczegoly_zam2_admin.png}
+            }}
+         \captionof{figure}{Szczegóły pojedynczego zamówienia}
+         W panelu ze szczegółami zamówienia administrator może podejrzeć ilości zamówionych produktów.
+         Oprócz tego wyświetlana jest lista wszystkich wymaganych części do konkretnego zamówienia w
+         zestawieniu z ilością dostępnych części na magazynie.
 \end{itemize}
 
 \subsubsection{Zamów części dodatkowe}
@@ -488,10 +523,10 @@ Panel ten składa się z kilku elementów:
    \item Rozwijana lista - lista wyboru części do zamówienia
    \item Okno ilości - pole pozwalające wpisać ilość produktu do zamówienia
    \item Przyciski dodawania lub odejmowania kolejnych części. Po wciśnięciu przycisku ``+''
-   dodajemy kolejne pole dla kolejnej części. Po wciśnięciu przycisku ``-'' zmniejszamy ilość
-   rozwijanych list z której wcześniej wybraliśmy produkt.
+         dodajemy kolejne pole dla kolejnej części. Po wciśnięciu przycisku ``-'' zmniejszamy ilość
+         rozwijanych list z której wcześniej wybraliśmy produkt.
    \item Przycisk ``Zamów''. Po wciśnięciu przycisku produkty zostają zamówione do magazynu i
-   następuje automatyczne przekierowanie na stronę ``Stany magazynowe''.
+         następuje automatyczne przekierowanie na stronę ``Stany magazynowe''.
 \end{enumerate}
 
 \subsubsection{Stany magazynowy}
@@ -505,7 +540,7 @@ Panel ten składa się z kilku elementów:
 \begin{figure}[H]
    \centering
    \includegraphics[width=0.99\textwidth,frame]{Wyglad/wylogowanie_admin.png}
-   \caption{Strona przedstawia widok po wciśnięciu przycisku ``Wyloguj'' w pasku nawigacyjnym}
+   \caption{Widok strony po wciśnięciu przycisku ``Wyloguj'' w pasku nawigacyjnym}
 \end{figure}
 
 \end{document}
