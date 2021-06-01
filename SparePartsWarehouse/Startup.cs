@@ -38,7 +38,7 @@ namespace SparePartsWarehouse
             });
             services.AddMemoryCache();
             services.AddDbContext<ModelContext>(options =>
-            options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.30:51521/pdb1;"));
+            options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=majkuss.mooo.com:51521/pdb1;"));
 
             services.AddControllers();
             services.AddCronJob<CronJob1>(c =>

@@ -32,7 +32,7 @@ namespace SparePartsWarehouse
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseOracle("User ID=admin;Password=lolp19;Data Source=serwer.lan:51521/pdb1;");
+                optionsBuilder.UseOracle("User ID=admin;Password=lolp19;Data Source=majkuss.mooo.com:51521/pdb1;");
             }
         }
 
