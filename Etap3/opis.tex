@@ -20,10 +20,13 @@
 \sectionfont{\color{Myblue}}
 \subsectionfont{\color{Myblue2}}
 \definecolor{codepurple}{HTML}{C42043}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=single}
+
 
 \renewcommand{\lstlistingname}{Kod}
 
 \begin{document}
+
 \begin{titlepage}
    \vspace*{80mm}
    \centering
@@ -157,17 +160,14 @@ więcej niż jedną część, to tabela zawiera więcej rzędów o takim samym p
             \item Wgląd w listę dostępnych produktów.
             \item Podgląd stanów magazynowych.
             \item Podgląd złożonych zamówień.
-            \item Automatyczne zamawianie części do magazynu, jeśli w złożonym
-                  zamówieniu są produkty, do których brakuje elementów.
+            \item Ręczne zamawianie części do magazynu.
             \item Podgląd specyfikacji produktów.
          \end{itemize}
    \item Inne funkcjonalności:
          \begin{itemize}
-            \item Stany magazynowe są automatycznie aktualizowane po złożeniu
-                  zamówienia przez Zamawiającego.
-            \item Automatyczne zamawianie części do magazynu, jeśli w złożonym
-                  zamówieniu są produkty, do których brakuje elementów.
-         \end{itemize}
+            \item Automatyczne zamawianie części do magazynu, dwa razy dziennie, jeśli występują
+            zamówienia, w których brakuje części. 
+            \item Automatyczne zamawianie części do magazynu (co tydzień) zgodnie z założonymi wartościami.     \end{itemize}
 \end{enumerate}
 \newpage
 \section{Początek prac nad aplikacją}
@@ -382,10 +382,186 @@ Zabezpieczenie jest o tyle istotne, ponieważ zakładamy w naszym projekcie wiel
 realizatorów zamówień.
 
 \subsection{System automatycznego zamawiania}
+System automatycznego zamawiania składa się z dwóch elementów:
+\begin{itemize}
+   \item funkcji wywołującej się raz w tygodniu, sprawdzającej, czy na magazynie są odpowiednie
+   ilości części zgodnie z założoną wartością,
+   \item funkcji wywołującej się 2 razy dziennie od poniedziałku do piątku, sprawdzającej, czy
+   ilości produktów na stanie wystarczają do zrealizowania wszystkich obecnie złożonych zamówień.
+\end{itemize}
+Obie funkcje zrealizowane są w ramach kodu w języku C\#. Ich wykonywanie się jest bazowane na
+programie Cron, który służy do harmonogramowania zadań. W przypadku ASP-Net skorzystaliśmy z
+dodatkowej paczki Cronos, aby zrealizować wywoływanie obu funkcji.
+Pierwsza z funkcji wykonuje sprawdzanie w kilku krokach:
+\begin{itemize}
+   \item Pobranie listy części z tabeli Details
+   \item Dla każdej części z tabeli Details, wyszukanie odpowiednika w magazynie(tabeli Stock)
+      \subitem • jeśli odpowiednik jest na magazynie to: domówienie części - różnicy - jeśli istnieje
+       potrzeba 
+      \subitem • jeśli odpowiednik nie istnieje na magazynie to: zamówienie wskazanej ilości danej części
+      do magazynu 
+\end{itemize}
+\begin{lstlisting}[style=sharpc,caption={Funkcja tygodniowego sprawdzania magazynu}]
+   public static void CheckWeeklyStock()
+   {
+       ModelContext m_context = new ModelContext();
+       List<Detail> allDetails = m_context.Details.ToList();
+       foreach(Detail detail in allDetails)
+       {
+           Stock stock = 
+               m_context.Stocks.Where(x => x.DetailId == detail.DetailId).First();
+           if (stock!=null)
+           {
+               if(stock.Quantity<howManyToBe)
+               {
+                   stock.Quantity = howManyToBe;
+               }
+           }
+           else
+           {
+               m_context.Stocks.Add(new Stock(){ 
+                   DetailId = detail.DetailId, 
+                   DetailName = detail.DetailName, 
+                   Quantity = howManyToBe 
+               });
+           }
+       }
+       m_context.SaveChanges();
+       m_context.Dispose();
+   }
+\end{lstlisting}
+Założyliśmy, że tygodniowe sprawdzanie stanu magazynowego będzie wykonywało się w każdy piątek o
+godzinie 17. Stworzyliśmy zadanie, które wywołuje w sobie funkcję CheckWeeklyStock(). Zadanie to
+zostało dodane harmonogramu zadań za pomocą wywołania: \newpage
+\begin{lstlisting}[style=sharpc,caption={Dodanie zadania do harmonogramu}]
+   services.AddCronJob<CronJob1>(c =>
+   {
+       c.TimeZoneInfo = TimeZoneInfo.Local;
+       c.CronExpression = @"0 17 * * FRI";
+   });
+\end{lstlisting}
+
+Druga funkcja opiera się głównie na znalezieniu wszytskich części i ich ilości potrzebnych do
+realizacji wszytskich zamówień. Podobnie jak poprzednia funkcja, również i ta jest zrealizowana w
+kilku krokach:
+\begin{itemize}
+   \item Pobranie listy wszystkich obecnie złożonych zamówień
+   \item Utworzenie listy wszytskich produktów występujących w zamówieniach
+   \item Dla każdego zamówienia znalezienie wszystkich produktów w nim zawartych 
+      \subitem • jeśli produkt wcześniej występował w liście wszystkich produktów to: zsumowanie
+      ilości tych produktów
+      \subitem • jeśli produkt wcześniej nie występował to: dodanie go do listy
+   \item Utworzenie listy wszystkich części występujących w zamówieniach
+   \item Dla każdego produktu w liście wszystkich produktów znalezienie wszystkich części
+      \subitem • jeśli część wcześniej występowała w liście wszystkich produktów to: zsumowanie
+      ilości tych części( z uwzględnieniem ilości występowania produktu)
+      \subitem • jeśli część wcześniej nie występowała to: dodanie jej do listy
+   \item Dla każdej części z listy, wyszukanie odpowiednika w magazynie(tabeli Stock)
+      \subitem • jeśli odpowiednik jest na magazynie to: domówienie części - różnicy - jeśli istnieje
+       potrzeba 
+      \subitem • jeśli odpowiednik nie istnieje na magazynie to: zamówienie wskazanej ilości danej
+      części do magazynu 
+\end{itemize}
+\begin{lstlisting}[style=sharpc,caption={Funkcja sprawdzania magazynu wywoływana dwa razy dziennie}]
+   public static void CheckTwiceADay()
+   {
+       ModelContext m_context = new ModelContext();
+       List<Stock> neededDetails = GetAllDetailsFromInvoices();
+       foreach (Stock stockDetail in neededDetails)
+       {
+           Stock stock = 
+            m_context.Stocks.Where(x => x.DetailId == stockDetail.DetailId).First();
+           if (stock != null)
+           {
+               if (stock.Quantity < stockDetail.Quantity)
+               {
+                   stock.Quantity = stockDetail.Quantity;
+               }
+           }
+           else
+           {
+               m_context.Stocks.Add(new Stock()
+               {
+                   DetailId = stockDetail.DetailId,
+                   DetailName = stockDetail.DetailName,
+                   Quantity = stockDetail.Quantity
+               });
+           }
+       }
+       m_context.SaveChanges();
+       m_context.Dispose();
+   }
+\end{lstlisting}
+W powyższym kodzie wywoływana jest funkcja GetAllDetailsFromInvoices(). Funkcja znajduje wszytskie
+potrzebne części do realizacji wszytskich obecnie złożonych zamówień. Kod funkcji przedstawiony jest
+poniżej.
+\begin{lstlisting}[style=sharpc,caption={Funkcja GetAllDetailsFromInvoices()},breaklines=true]
+private static List<Stock> GetAllDetailsFromInvoices()
+{
+   ModelContext m_context = new ModelContext();
+   List<InvoiceItem> allInvoiceItems = new List<InvoiceItem>();
+   List<Invoice> invoiceList = m_context.Invoices.ToList();
+   foreach (Invoice item in invoiceList)
+   {
+      List<InvoiceItem> tempList = 
+         m_context.InvoiceItems.Where(x => x.InvoiceId == item.InvoiceId).ToList();
+      foreach (InvoiceItem invoiceItem in tempList)
+      {
+         if (allInvoiceItems.Any(x => x.ProductId == invoiceItem.ProductId))
+         {
+            var itemToChange = 
+               allInvoiceItems.Where(x => x.ProductId == invoiceItem.ProductId).FirstOrDefault();
+            itemToChange.ProductQuantity += invoiceItem.ProductQuantity;
+            }
+         else
+         {
+            allInvoiceItems.Add(invoiceItem);
+         }
+      }
+   }
+   List<Stock> details = new List<Stock>();
+   foreach (InvoiceItem item in allInvoiceItems)
+   {
+      List<ProdSpecification> prodSpecList = 
+         m_context.ProdSpecifications.Where(x => x.ProductId == item.ProductId).ToList();
+      foreach (ProdSpecification prodDetail in prodSpecList)
+      {
+         if (details.Any(x => x.DetailId == prodDetail.DetailId))
+         {
+            var detailItem = 
+               details.Find(x => x.DetailId == prodDetail.DetailId);
+            detailItem.Quantity += 
+                  (int)(prodDetail.DetailQuantity * item.ProductQuantity);
+         }
+         else
+         {
+            details.Add(new Stock(){
+               DetailName = 
+                  m_context.Details.Where(x => x.DetailId == prodDetail.DetailId).FirstOrDefault().DetailName,
+               DetailId = (int)prodDetail.DetailId,
+               Quantity = (int)(prodDetail.DetailQuantity * item.ProductQuantity)
+            });
+         }
+      }
+   }
+   return details;
+}
+\end{lstlisting}
+W przypadku drugiej funkjci sprawdzającej magazyn założyliśmy, że będzie się ona wykonywała od
+poniedziałku do piątku o godzinie 8.00 oraz 16.00 czasu lokalnego. Ponownie urworzyliśmy zadanie
+oraz dodaliśmy je do harmonogramu za pomocą wywołania:
+\begin{lstlisting}[style=sharpc,caption={Dodanie zadania do harmonogramu}]
+   services.AddCronJob<CronJob2>(c =>
+   {
+       c.TimeZoneInfo = TimeZoneInfo.Local;
+       c.CronExpression = @"0 8,16 * * MON-FRI";
+   });
+\end{lstlisting}
+
 
 \subsection{Zabezpieczenie operacji na bazie danych w przypadku wielu użytkowników}
 W celu zabezpieczenia bazy danych przed jednoczesnymn zapisem przez wielu
-użytkowników wymaga wpierw identyfikacja miejsc w których do takiej sytuacji
+użytkowników wymagana była najpierw identyfikacja miejsc, w których do takiej sytuacji
 może dojść. Operacje dodawania danych do tabel są domyślnie obsługiwane przez
 bazę danych Oracle poprzez stosowanie ekskluzywnej blokady rekordu - oznacza to,
 że inne operacje wykonywane na tej samej tabeli nie mogą zablokować jej na
@@ -535,6 +711,42 @@ klienta, w postaci ograniczeń wartości wpisywanych do pola oraz po stronie
 serwera już po przesłaniu formularza.
 
 \subsection{Testowanie funkcjonalności systemu automatycznego zamawiania}
+W celu przetestowania działania obu funkcji automatycznego zamawiania wyczyściliśmy tabelę Stock w
+bazie danych. Następnie zmodyfikowaliśmy czasy wywołania obu funkcji, tak aby nie musieć czekać
+przykładowo do piątku (godz. 17). Ilość danej części, jaka powinna się znajdować w magazynie została
+ustawiona na 50. W kolejnym kroku uruchomiliśmy program i zaczekaliśmy na wywołanie pierwszej
+funkcji. Poniżej zaprezentowany jest efekt przed i po.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.99\textwidth,frame]{przed_testem1.jpg}
+   \includegraphics[width=0.99\textwidth,frame]{po_teście1.jpg}
+   \caption{Stan magazynu przed i po wywołaniu funkcji}
+\end{figure}
+Aby przetestować działanie drugiej funkcji sprawdzającej dodaliśmy większe zamówienie, przykładowo
+na 50 laptopów, tak aby wymagane były większe stany magazynowe niż po 50 części.
+Poniżej przedstawione jest zdjęcie szczegółów zamówienia.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.99\textwidth,frame]{wymagane_do zamowienia_50lapkow.png}
+   \caption{Wymagana ilość części do zrealizowania zamówienia}
+\end{figure}
+Na powyższym zdjęciu wyrazie widzimy, że ilości części na magazynie nie wystarczają do realizacji
+zamówienia. Każdej części jest po 50 sztuk - stan magazynowy po wywołaniu poprzedniej funkcji.
+Następnie wywołana została druga funkcja sprawdzająca.
+Uzupełniła ona poprawnie stany magazynowe, nie tylko dla powyższego zamówienia ale i dla pozostałych
+zamówień. Poniżej przedstawiony jest efekt działania funkcji.
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.99\textwidth,frame]{stan_mag_po_na specyfikacji.png}
+   \caption{Stan magazynowy konkretnych części w zamówieniu}
+\end{figure}
+
+\begin{figure}[H]
+   \centering
+   \includegraphics[width=0.99\textwidth,frame]{magazyn po.png}
+   \caption{Stan magazynowy po wywołaniu funkcji sprawdzającej}
+\end{figure}
+
 
 \subsection{Testowanie dostępu wielu osób jednocześnie}
 W celu przetestowania dostępu wielu osób do bazy danych jednocześnie

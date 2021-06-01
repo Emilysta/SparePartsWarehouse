@@ -41,13 +41,16 @@ namespace SparePartsWarehouse
             options.UseOracle("User Id=ADMIN;Password=lolp19;Data Source=192.168.1.30:51521/pdb1;"));
 
             services.AddControllers();
-            services.AddSingleton<IJobFactory, CustomQuartzJobFactory>();
-            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
-            services.AddSingleton<NotificationJob>();
-            services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob), "Notification Job", "0 0 17 ? * FRI")); // 0/10 * * * * ? co 10 sekund
-            services.AddSingleton<NotificationJob2>();
-            services.AddSingleton(new JobMetadata(Guid.NewGuid(), typeof(NotificationJob2), "Notification Job2", "0 0 8,17 ? * MON-FRI")); //od poniedziałku do piątku o 8 i 17
-            services.AddHostedService<CustomQuartzHostedService>(); 
+            services.AddCronJob<CronJob1>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Local;
+                c.CronExpression = @"0 17 * * FRI";
+            });
+            services.AddCronJob<CronJob2>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Local;
+                c.CronExpression = @"0 8,16 * * MON-FRI";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
